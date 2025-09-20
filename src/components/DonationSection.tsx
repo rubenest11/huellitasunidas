@@ -46,17 +46,11 @@ export const DonationSection: React.FC<DonationSectionProps> = ({ onDonationSele
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {formattedDonations.map((donation) => (
-          <div key={donation.id} className="space-y-4">
-            <DonationCard 
-              donation={donation} 
-              onDonate={() => onDonationSelect(donation.id)}
-            />
-            <div className="text-center">
-              <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                📍 {donation.shelter}
-              </span>
-            </div>
-          </div>
+          <DonationCard 
+            key={donation.id}
+            donation={donation} 
+            onDonate={() => onDonationSelect(donation.id)}
+          />
         ))}
       </div>
     </section>
