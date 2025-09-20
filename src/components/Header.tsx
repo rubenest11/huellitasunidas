@@ -76,16 +76,17 @@ export const Header: React.FC<HeaderProps> = ({ activeSection, setActiveSection 
               <Building2 className="w-4 h-4 sm:w-5 sm:h-5" />
               <span>Refugios</span>
             </button>
+            <div className="w-px bg-gray-300 mx-1"></div>
             <button
               onClick={() => scrollToSection('admin')}
-              className={`flex items-center justify-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-xl font-medium transition-all duration-300 text-xs sm:text-sm ${
+              className={`flex items-center justify-center px-2 sm:px-3 py-2 rounded-xl font-medium transition-all duration-300 ${
                 activeSection === 'admin'
                   ? 'bg-purple-500 text-white shadow-lg transform scale-105'
                   : 'text-gray-600 hover:text-purple-500 hover:bg-white'
               }`}
+              title="Panel de Administración"
             >
               <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span>Admin</span>
             </button>
           </nav>
         </div>

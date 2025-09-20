@@ -1,11 +1,64 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Plus, Edit3, Trash2, Search, Filter, Save, X } from 'lucide-react';
+import { LoginForm } from './LoginForm';
+
+interface Shelter {
+  id: string;
+  name: string;
+  code: string;
+  location: string;
+}
 
 interface AdminPanelProps {
   onBack: () => void;
 }
 
-// Mock data para administración
+// Mock data para administración por refugio
+const mockDataByShelter = {
+  'refugio-san-angel': {
+    donations: [
+      { id: 1, title: "Cirugía de Emergencia para Luna", raised: 3200, goal: 5000, status: "active" },
+      { id: 4, title: "Alimentación para Perros Senior", raised: 2400, goal: 4000, status: "active" },
+    ],
+    dogs: [
+      { id: 1, name: "Bella", age: "2 años", breed: "Golden Retriever Mix", status: "available" },
+      { id: 4, name: "Charlie", age: "6 meses", breed: "Beagle Mix", status: "available" },
+    ]
+  },
+  'patitas-felices': {
+    donations: [
+      { id: 2, title: "Refugio para 20 Cachorros", raised: 8500, goal: 12000, status: "active" },
+      { id: 6, title: "Vacunación Masiva", raised: 6800, goal: 10000, status: "active" },
+    ],
+    dogs: [
+      { id: 2, name: "Max", age: "4 años", breed: "Labrador", status: "available" },
+      { id: 6, name: "Bruno", age: "5 años", breed: "Pitbull Mix", status: "adopted" },
+    ]
+  },
+  'hogar-canino': {
+    donations: [
+      { id: 3, title: "Tratamiento contra Parvovirus", raised: 1800, goal: 3500, status: "urgent" },
+      { id: 5, title: "Rehabilitación para Rocky", raised: 5200, goal: 7500, status: "active" },
+    ],
+    dogs: [
+      { id: 3, name: "Luna", age: "1 año", breed: "Pastor Alemán Mix", status: "available" },
+      { id: 5, name: "Mía", age: "3 años", breed: "Chihuahua Mix", status: "reserved" },
+    ]
+  }
+};
+
+const shelterNames = {
+  'refugio-san-angel': 'Refugio San Ángel',
+  'patitas-felices': 'Patitas Felices',
+  'hogar-canino': 'Hogar Canino'
+};
+
+const shelterColors = {
+  'refugio-san-angel': 'from-orange-500 to-red-500',
+  'patitas-felices': 'from-blue-500 to-purple-500',
+  'hogar-canino': 'from-green-500 to-teal-500'
+};
+
 const mockDonations = [
   { id: 1, title: "Cirugía de Emergencia para Luna", raised: 3200, goal: 5000, status: "active", shelter: "Refugio San Ángel" },
   { id: 2, title: "Refugio para 20 Cachorros", raised: 8500, goal: 12000, status: "active", shelter: "Patitas Felices" },
@@ -19,10 +72,39 @@ const mockDogs = [
 ];
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentShelter, setCurrentShelter] = useState<Shelter | null>(null);
+  const [showLogin, setShowLogin] = useState(true);
   const [activeTab, setActiveTab] = useState<'donations' | 'adoptions' | 'shelters'>('donations');
   const [searchTerm, setSearchTerm] = useState('');
   const [editingItem, setEditingItem] = useState<any>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+
+  const handleLogin = (shelter: Shelter) => {
+    setCurrentShelter(shelter);
+    setIsAuthenticated(true);
+    setShowLogin(false);
+  };
+
+  const handleLogout = () => {
+    setCurrentShelter(null);
+    setIsAuthenticated(false);
+    setShowLogin(true);
+  };
+
+  if (showLogin || !isAuthenticated || !currentShelter) {
+    return (
+      <LoginForm 
+        onLogin={handleLogin}
+        onCancel={onBack}
+      />
+    );
+  }
+
+  // Obtener datos específicos del refugio
+  const shelterData = mockDataByShelter[currentShelter.id as keyof typeof mockDataByShelter];
+  const currentDonations = shelterData?.donations || [];
+  const currentDogs = shelterData?.dogs || [];
 
   const EditForm = ({ item, type, onSave, onCancel }: any) => {
     const [formData, setFormData] = useState(item || {});
@@ -145,18 +227,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Refugio</label>
-              <select
-                value={formData.shelter || ''}
-                onChange={(e) => setFormData({...formData, shelter: e.target.value})}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
-                required
-              >
-                <option value="">Seleccionar refugio</option>
-                <option value="Refugio San Ángel">Refugio San Ángel</option>
-                <option value="Patitas Felices">Patitas Felices</option>
-                <option value="Hogar Canino">Hogar Canino</option>
-                <option value="Rescate Tijuana">Rescate Tijuana</option>
-              </select>
+              <input
+                type="text"
+                value={currentShelter.name}
+                disabled
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600"
+              />
             </div>
 
             <div className="flex gap-4 pt-4">
@@ -203,23 +279,26 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button 
-                onClick={onBack}
+                onClick={handleLogout}
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
-                <span className="font-medium">Volver</span>
+                <span className="font-medium">Cerrar Sesión</span>
               </button>
-              <h1 className="text-2xl font-bold text-gray-800">Panel de Administración</h1>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-800">{currentShelter.name}</h1>
+                <p className="text-sm text-gray-600">{currentShelter.location}</p>
+              </div>
             </div>
             <button
               onClick={() => setShowAddForm(true)}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-2 px-4 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-300 flex items-center gap-2"
+              className={`bg-gradient-to-r ${shelterColors[currentShelter.id as keyof typeof shelterColors]} text-white font-semibold py-2 px-4 rounded-xl hover:opacity-90 transition-all duration-300 flex items-center gap-2`}
             >
               <Plus className="w-5 h-5" />
               Agregar
             </button>
           </div>
-        </div>
+              Donaciones ({currentDonations.length})
       </div>
 
       <div className="container mx-auto px-4 py-8">
@@ -256,7 +335,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
             Refugios
           </button>
         </div>
-
+              Adopciones ({currentDogs.length})
         {/* Search and Filters */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="relative flex-1">
@@ -266,7 +345,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
               placeholder="Buscar..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              Mi Refugio
             />
           </div>
           <button className="flex items-center gap-2 px-6 py-3 border border-gray-300 rounded-xl hover:border-purple-500 hover:text-purple-500 transition-all duration-300">
@@ -290,7 +369,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {mockDonations.map((donation) => (
+                  {currentDonations.map((donation) => (
                     <tr key={donation.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
                         <div className="font-medium text-gray-800">{donation.title}</div>
@@ -316,7 +395,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                            donation.status === 'urgent' ? 'Urgente' : donation.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{donation.shelter}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{currentShelter.name}</td>
                       <td className="px-6 py-4">
                         <div className="flex gap-2">
                           <button
@@ -354,7 +433,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {mockDogs.map((dog) => (
+                  {currentDogs.map((dog) => (
                     <tr key={dog.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
                         <div className="font-medium text-gray-800">{dog.name}</div>
@@ -371,7 +450,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                            dog.status === 'adopted' ? 'Adoptado' : dog.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{dog.shelter}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{currentShelter.name}</td>
                       <td className="px-6 py-4">
                         <div className="flex gap-2">
                           <button
@@ -397,8 +476,22 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
 
           {activeTab === 'shelters' && (
             <div className="p-6 text-center text-gray-500">
-              <h3 className="text-lg font-medium mb-2">Gestión de Refugios</h3>
-              <p>Aquí podrás administrar la información de los refugios afiliados.</p>
+              <div className={`bg-gradient-to-r ${shelterColors[currentShelter.id as keyof typeof shelterColors]} text-white rounded-2xl p-8 mb-6`}>
+                <h3 className="text-2xl font-bold mb-2">{currentShelter.name}</h3>
+                <p className="text-lg opacity-90">{currentShelter.location}</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-orange-50 rounded-xl p-6">
+                  <h4 className="text-lg font-semibold text-orange-800 mb-2">Campañas de Donación</h4>
+                  <p className="text-3xl font-bold text-orange-600">{currentDonations.length}</p>
+                  <p className="text-sm text-orange-700">Campañas activas</p>
+                </div>
+                <div className="bg-blue-50 rounded-xl p-6">
+                  <h4 className="text-lg font-semibold text-blue-800 mb-2">Perritos en Adopción</h4>
+                  <p className="text-3xl font-bold text-blue-600">{currentDogs.length}</p>
+                  <p className="text-sm text-blue-700">Esperando hogar</p>
+                </div>
+              </div>
             </div>
           )}
         </div>
