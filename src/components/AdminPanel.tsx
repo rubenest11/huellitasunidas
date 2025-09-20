@@ -17,32 +17,32 @@ interface AdminPanelProps {
 const mockDataByShelter = {
   'refugio-san-angel': {
     donations: [
-      { id: 1, title: "Cirugía de Emergencia para Luna", raised: 3200, goal: 5000, status: "active" },
-      { id: 4, title: "Alimentación para Perros Senior", raised: 2400, goal: 4000, status: "active" },
+      { id: 1, title: "Cirugía de Emergencia para Luna", raised: 3200, goal: 5000, status: "active", images: ["https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800"] },
+      { id: 4, title: "Alimentación para Perros Senior", raised: 2400, goal: 4000, status: "active", images: ["https://images.pexels.com/photos/58997/pexels-photo-58997.jpeg?auto=compress&cs=tinysrgb&w=800"] },
     ],
     dogs: [
-      { id: 1, name: "Bella", age: "2 años", breed: "Golden Retriever Mix", status: "available" },
-      { id: 4, name: "Charlie", age: "6 meses", breed: "Beagle Mix", status: "available" },
+      { id: 1, name: "Bella", age: "2 años", breed: "Golden Retriever Mix", status: "available", images: ["https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=800"] },
+      { id: 4, name: "Charlie", age: "6 meses", breed: "Beagle Mix", status: "available", images: ["https://images.pexels.com/photos/1390361/pexels-photo-1390361.jpeg?auto=compress&cs=tinysrgb&w=800"] },
     ]
   },
   'patitas-felices': {
     donations: [
-      { id: 2, title: "Refugio para 20 Cachorros", raised: 8500, goal: 12000, status: "active" },
-      { id: 6, title: "Vacunación Masiva", raised: 6800, goal: 10000, status: "active" },
+      { id: 2, title: "Refugio para 20 Cachorros", raised: 8500, goal: 12000, status: "active", images: ["https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=800"] },
+      { id: 6, title: "Vacunación Masiva", raised: 6800, goal: 10000, status: "active", images: ["https://images.pexels.com/photos/1254140/pexels-photo-1254140.jpeg?auto=compress&cs=tinysrgb&w=800"] },
     ],
     dogs: [
-      { id: 2, name: "Max", age: "4 años", breed: "Labrador", status: "available" },
-      { id: 6, name: "Bruno", age: "5 años", breed: "Pitbull Mix", status: "adopted" },
+      { id: 2, name: "Max", age: "4 años", breed: "Labrador", status: "available", images: ["https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=800"] },
+      { id: 6, name: "Bruno", age: "5 años", breed: "Pitbull Mix", status: "adopted", images: ["https://images.pexels.com/photos/1254140/pexels-photo-1254140.jpeg?auto=compress&cs=tinysrgb&w=800"] },
     ]
   },
   'hogar-canino': {
     donations: [
-      { id: 3, title: "Tratamiento contra Parvovirus", raised: 1800, goal: 3500, status: "urgent" },
-      { id: 5, title: "Rehabilitación para Rocky", raised: 5200, goal: 7500, status: "active" },
+      { id: 3, title: "Tratamiento contra Parvovirus", raised: 1800, goal: 3500, status: "urgent", images: ["https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=800"] },
+      { id: 5, title: "Rehabilitación para Rocky", raised: 5200, goal: 7500, status: "active", images: ["https://images.pexels.com/photos/1390361/pexels-photo-1390361.jpeg?auto=compress&cs=tinysrgb&w=800"] },
     ],
     dogs: [
-      { id: 3, name: "Luna", age: "1 año", breed: "Pastor Alemán Mix", status: "available" },
-      { id: 5, name: "Mía", age: "3 años", breed: "Chihuahua Mix", status: "reserved" },
+      { id: 3, name: "Luna", age: "1 año", breed: "Pastor Alemán Mix", status: "available", images: ["https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800"] },
+      { id: 5, name: "Mía", age: "3 años", breed: "Chihuahua Mix", status: "reserved", images: ["https://images.pexels.com/photos/58997/pexels-photo-58997.jpeg?auto=compress&cs=tinysrgb&w=800"] },
     ]
   }
 };
@@ -79,6 +79,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingItem, setEditingItem] = useState<any>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [shelterData, setShelterData] = useState<any>(mockDataByShelter);
 
   const handleLogin = (shelter: Shelter) => {
     setCurrentShelter(shelter);
@@ -102,9 +103,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
   }
 
   // Obtener datos específicos del refugio
-  const shelterData = mockDataByShelter[currentShelter.id as keyof typeof mockDataByShelter];
-  const currentDonations = shelterData?.donations || [];
-  const currentDogs = shelterData?.dogs || [];
+  const currentShelterData = shelterData[currentShelter.id as keyof typeof shelterData];
+  const currentDonations = currentShelterData?.donations || [];
+  const currentDogs = currentShelterData?.dogs || [];
 
   const EditForm = ({ item, type, onSave, onCancel }: any) => {
     const [formData, setFormData] = useState(item || {});
@@ -324,16 +325,60 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
   };
 
   const handleSave = (data: any) => {
-    console.log('Guardando:', data);
+    if (!currentShelter) return;
+    
+    // Actualizar los datos en el estado
+    setShelterData((prevData: any) => {
+      const newData = { ...prevData };
+      const shelterKey = currentShelter.id as keyof typeof newData;
+      
+      if (activeTab === 'donations') {
+        if (editingItem) {
+          // Editar donación existente
+          newData[shelterKey].donations = newData[shelterKey].donations.map((donation: any) =>
+            donation.id === editingItem.id ? { ...donation, ...data } : donation
+          );
+        } else {
+          // Agregar nueva donación
+          const newId = Math.max(...newData[shelterKey].donations.map((d: any) => d.id), 0) + 1;
+          newData[shelterKey].donations.push({ ...data, id: newId });
+        }
+      } else if (activeTab === 'adoptions') {
+        if (editingItem) {
+          // Editar adopción existente
+          newData[shelterKey].dogs = newData[shelterKey].dogs.map((dog: any) =>
+            dog.id === editingItem.id ? { ...dog, ...data } : dog
+          );
+        } else {
+          // Agregar nueva adopción
+          const newId = Math.max(...newData[shelterKey].dogs.map((d: any) => d.id), 0) + 1;
+          newData[shelterKey].dogs.push({ ...data, id: newId });
+        }
+      }
+      
+      return newData;
+    });
+    
     setEditingItem(null);
     setShowAddForm(false);
-    // Aquí implementarías la lógica para guardar en la base de datos
   };
 
   const handleDelete = (id: number, type: string) => {
     if (confirm(`¿Estás seguro de que quieres eliminar este ${type}?`)) {
-      console.log('Eliminando:', id, type);
-      // Aquí implementarías la lógica para eliminar de la base de datos
+      if (!currentShelter) return;
+      
+      setShelterData((prevData: any) => {
+        const newData = { ...prevData };
+        const shelterKey = currentShelter.id as keyof typeof newData;
+        
+        if (activeTab === 'donations') {
+          newData[shelterKey].donations = newData[shelterKey].donations.filter((donation: any) => donation.id !== id);
+        } else if (activeTab === 'adoptions') {
+          newData[shelterKey].dogs = newData[shelterKey].dogs.filter((dog: any) => dog.id !== id);
+        }
+        
+        return newData;
+      });
     }
   };
 
@@ -437,7 +482,26 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                   {currentDonations.map((donation) => (
                     <tr key={donation.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
-                        <div className="font-medium text-gray-800">{donation.title}</div>
+                        <div className="flex items-center gap-3">
+                          {donation.images && donation.images.length > 0 && (
+                            <div className="flex -space-x-2">
+                              {donation.images.slice(0, 3).map((image: string, index: number) => (
+                                <img
+                                  key={index}
+                                  src={image}
+                                  alt={`Foto ${index + 1}`}
+                                  className="w-8 h-8 rounded-full border-2 border-white object-cover"
+                                />
+                              ))}
+                              {donation.images.length > 3 && (
+                                <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs font-medium text-gray-600">
+                                  +{donation.images.length - 3}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          <div className="font-medium text-gray-800">{donation.title}</div>
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm text-gray-600">
@@ -501,7 +565,26 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                   {currentDogs.map((dog) => (
                     <tr key={dog.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
-                        <div className="font-medium text-gray-800">{dog.name}</div>
+                        <div className="flex items-center gap-3">
+                          {dog.images && dog.images.length > 0 && (
+                            <div className="flex -space-x-2">
+                              {dog.images.slice(0, 3).map((image: string, index: number) => (
+                                <img
+                                  key={index}
+                                  src={image}
+                                  alt={`Foto ${index + 1}`}
+                                  className="w-8 h-8 rounded-full border-2 border-white object-cover"
+                                />
+                              ))}
+                              {dog.images.length > 3 && (
+                                <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs font-medium text-gray-600">
+                                  +{dog.images.length - 3}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          <div className="font-medium text-gray-800">{dog.name}</div>
+                        </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">{dog.age}</td>
                       <td className="px-6 py-4 text-sm text-gray-600">{dog.breed}</td>
