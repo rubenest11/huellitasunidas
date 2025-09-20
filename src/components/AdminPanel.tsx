@@ -298,7 +298,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
               Agregar
             </button>
           </div>
-              Donaciones ({currentDonations.length})
       </div>
 
       <div className="container mx-auto px-4 py-8">
@@ -335,7 +334,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
             Refugios
           </button>
         </div>
-              Adopciones ({currentDogs.length})
         {/* Search and Filters */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="relative flex-1">
@@ -345,7 +343,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
               placeholder="Buscar..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              Mi Refugio
+              className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             />
           </div>
           <button className="flex items-center gap-2 px-6 py-3 border border-gray-300 rounded-xl hover:border-purple-500 hover:text-purple-500 transition-all duration-300">
