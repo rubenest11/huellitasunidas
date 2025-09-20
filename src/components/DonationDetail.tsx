@@ -21,27 +21,46 @@ const donationDetails = {
     endDate: "28 de febrero, 2025",
     category: "Cirugía de Emergencia",
     location: "Ciudad de México",
-    veterinary: "Hospital Veterinario San Ángel"
+    veterinary: "Hospital Veterinario San Ángel",
+    shelter: "Refugio San Ángel"
   },
   2: {
     id: 2,
-    title: "Refugio para 20 Cachorros Abandonados",
-    description: "Estos pequeños fueron encontrados sin madre y necesitan cuidado veterinario y alimento especial.",
-    story: "La semana pasada recibimos una llamada de emergencia: 20 cachorros de apenas 4 semanas habían sido abandonados en una caja de cartón cerca de un parque. Sin su madre, estos pequeños necesitan alimentación cada 2 horas con fórmula especial, cuidado veterinario constante y un ambiente cálido y seguro. Hemos convertido una de nuestras salas en una guardería especial para ellos, pero los costos de alimentación, vacunas, desparasitación y cuidado médico son enormes. Cada cachorro necesita aproximadamente $600 pesos en cuidados durante sus primeros 3 meses de vida. Tu donación nos ayudará a darles la mejor oportunidad de crecer sanos y fuertes hasta que estén listos para encontrar sus hogares para siempre.",
+    title: "Cirugía de Emergencia para Max",
+    description: "Max fue encontrado con una fractura en la pata y necesita cirugía urgente para caminar de nuevo.",
+    story: "Max fue encontrado hace dos semanas en las calles de Guadalajara. Un transeúnte lo vio cojeando y claramente en dolor, así que inmediatamente lo trajo a nuestro refugio. Los veterinarios confirmaron que tiene una fractura compleja en su pata delantera derecha que requiere cirugía inmediata. Sin esta operación, Max podría quedar cojo permanentemente o incluso perder la pata. Es un perrito muy noble de 4 años que merece una segunda oportunidad para correr y jugar como cualquier perro feliz. La cirugía incluye la colocación de placas de titanio y un período de rehabilitación de 6 semanas. Con tu ayuda, Max podrá volver a caminar y encontrar una familia amorosa.",
     images: [
-      "https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/1254140/pexels-photo-1254140.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/1390361/pexels-photo-1390361.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      "https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=1200",
     ],
-    raised: 8500,
-    goal: 12000,
-    donors: 143,
-    urgent: false,
-    createdDate: "8 de enero, 2025",
-    endDate: "31 de marzo, 2025",
-    category: "Cuidado de Cachorros",
+    raised: 2800,
+    goal: 4500,
+    donors: 56,
+    urgent: true,
+    createdDate: "10 de enero, 2025",
+    endDate: "25 de febrero, 2025",
+    category: "Cirugía de Emergencia",
     location: "Guadalajara",
-    veterinary: "Clínica Veterinaria Patitas"
+    veterinary: "Clínica Veterinaria Patitas",
+    shelter: "Patitas Felices Guadalajara"
+  },
+  3: {
+    id: 3,
+    title: "Cirugía de Emergencia para Rocky",
+    description: "Rocky fue encontrado con una fractura en la pata y necesita cirugía urgente para caminar de nuevo.",
+    story: "Rocky fue encontrada hace una semana en las calles de Monterrey. Una familia la encontró cojeando y claramente en dolor, así que inmediatamente la trajeron a nuestro refugio. Los veterinarios confirmaron que tiene una fractura compleja en su pata trasera derecha que requiere cirugía inmediata. Sin esta operación, Rocky podría quedar cojo permanentemente o incluso perder la pata. Es un perrito muy cariñoso de 3 años que merece una segunda oportunidad para correr y jugar como cualquier perro feliz. La cirugía incluye la colocación de placas de titanio y un período de rehabilitación de 7 semanas. Con tu ayuda, Rocky podrá volver a caminar y encontrar una familia amorosa.",
+    images: [
+      "https://images.pexels.com/photos/1390361/pexels-photo-1390361.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    ],
+    raised: 1800,
+    goal: 3500,
+    donors: 36,
+    urgent: false,
+    createdDate: "12 de enero, 2025",
+    endDate: "28 de febrero, 2025",
+    category: "Cirugía de Emergencia",
+    location: "Monterrey",
+    veterinary: "Hospital Veterinario Canino",
+    shelter: "Hogar Canino Monterrey"
   }
 };
 
