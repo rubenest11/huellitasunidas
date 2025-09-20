@@ -1,15 +1,19 @@
 import React from 'react';
 import { useEffect } from 'react';
-import { Heart, Home, DollarSign } from 'lucide-react';
+import { Heart, Home, DollarSign, Building2, Settings } from 'lucide-react';
 
 interface HeaderProps {
-  activeSection: 'donations' | 'adoptions';
-  setActiveSection: (section: 'donations' | 'adoptions') => void;
+  activeSection: 'donations' | 'adoptions' | 'shelters' | 'admin';
+  setActiveSection: (section: 'donations' | 'adoptions' | 'shelters' | 'admin') => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ activeSection, setActiveSection }) => {
-  const scrollToSection = (section: 'donations' | 'adoptions') => {
+  const scrollToSection = (section: 'donations' | 'adoptions' | 'shelters' | 'admin') => {
     setActiveSection(section);
+    
+    // No hacer scroll para admin ya que es una página separada
+    if (section === 'admin') return;
+    
     // Pequeño delay para asegurar que el contenido se renderice antes del scroll
     setTimeout(() => {
       const element = document.getElementById(`${section}-section`);
@@ -38,30 +42,50 @@ export const Header: React.FC<HeaderProps> = ({ activeSection, setActiveSection 
             </div>
           </div>
           
-          <nav className="flex space-x-1 bg-gray-100 rounded-full p-1 w-full sm:w-auto">
+          <nav className="flex flex-wrap gap-1 bg-gray-100 rounded-2xl p-1 w-full sm:w-auto justify-center">
             <button
               onClick={() => scrollToSection('donations')}
-              className={`flex items-center justify-center space-x-1 sm:space-x-2 px-3 sm:px-6 py-2 sm:py-3 rounded-full font-medium transition-all duration-300 flex-1 sm:flex-none text-sm sm:text-base ${
+              className={`flex items-center justify-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-xl font-medium transition-all duration-300 text-xs sm:text-sm ${
                 activeSection === 'donations'
                   ? 'bg-orange-500 text-white shadow-lg transform scale-105'
                   : 'text-gray-600 hover:text-orange-500 hover:bg-white'
               }`}
             >
               <DollarSign className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden sm:inline">Donaciones</span>
-              <span className="sm:hidden">Donar</span>
+              <span>Donar</span>
             </button>
             <button
               onClick={() => scrollToSection('adoptions')}
-              className={`flex items-center justify-center space-x-1 sm:space-x-2 px-3 sm:px-6 py-2 sm:py-3 rounded-full font-medium transition-all duration-300 flex-1 sm:flex-none text-sm sm:text-base ${
+              className={`flex items-center justify-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-xl font-medium transition-all duration-300 text-xs sm:text-sm ${
                 activeSection === 'adoptions'
                   ? 'bg-blue-500 text-white shadow-lg transform scale-105'
                   : 'text-gray-600 hover:text-blue-500 hover:bg-white'
               }`}
             >
               <Home className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden sm:inline">Adopciones</span>
-              <span className="sm:hidden">Adoptar</span>
+              <span>Adoptar</span>
+            </button>
+            <button
+              onClick={() => scrollToSection('shelters')}
+              className={`flex items-center justify-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-xl font-medium transition-all duration-300 text-xs sm:text-sm ${
+                activeSection === 'shelters'
+                  ? 'bg-green-500 text-white shadow-lg transform scale-105'
+                  : 'text-gray-600 hover:text-green-500 hover:bg-white'
+              }`}
+            >
+              <Building2 className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>Refugios</span>
+            </button>
+            <button
+              onClick={() => scrollToSection('admin')}
+              className={`flex items-center justify-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-xl font-medium transition-all duration-300 text-xs sm:text-sm ${
+                activeSection === 'admin'
+                  ? 'bg-purple-500 text-white shadow-lg transform scale-105'
+                  : 'text-gray-600 hover:text-purple-500 hover:bg-white'
+              }`}
+            >
+              <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>Admin</span>
             </button>
           </nav>
         </div>
