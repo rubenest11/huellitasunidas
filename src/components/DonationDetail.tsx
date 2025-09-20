@@ -12,9 +12,6 @@ const donationDetails = {
     story: "Luna fue encontrada hace tres semanas en las calles de la Ciudad de México. Una familia la vio cojeando y claramente en dolor, así que inmediatamente la trajeron a nuestro refugio. Los veterinarios confirmaron que tiene una fractura compleja en su pata trasera izquierda que requiere cirugía inmediata. Sin esta operación, Luna podría quedar coja permanentemente o incluso perder la pata. Es una perrita muy dulce de apenas 2 años que merece una segunda oportunidad para correr y jugar como cualquier perro feliz. La cirugía incluye la colocación de placas de titanio y un período de rehabilitación de 8 semanas. Con tu ayuda, Luna podrá volver a caminar y encontrar una familia amorosa.",
     images: [
       "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/1390361/pexels-photo-1390361.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     raised: 3200,
     goal: 5000,
