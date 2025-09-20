@@ -10,6 +10,8 @@ interface Donation {
   goal: number;
   donors: number;
   urgent: boolean;
+  location: string;
+  shelterName: string;
 }
 
 interface DonationCardProps {
@@ -45,6 +47,10 @@ export const DonationCard: React.FC<DonationCardProps> = ({ donation, onDonate }
         <div className="flex items-center gap-1 text-gray-600 mb-3">
           <MapPin className="w-4 h-4" />
           <span className="text-sm">{donation.location}</span>
+        </div>
+        <div className="flex items-center gap-1 text-gray-600 mb-3">
+          <MapPin className="w-4 h-4" />
+          <span className="text-sm">{donation.shelterName}</span>
         </div>
         <p className="text-gray-600 mb-4 text-sm leading-relaxed line-clamp-3">{donation.description}</p>
         
