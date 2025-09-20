@@ -298,6 +298,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
               Agregar
             </button>
           </div>
+        </div>
       </div>
 
       <div className="container mx-auto px-4 py-8">
