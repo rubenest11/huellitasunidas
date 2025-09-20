@@ -95,6 +95,11 @@ export const DonationDetail: React.FC<DonationDetailProps> = ({ donationId, onBa
   const updatedDonation = findUpdatedDonation();
   const donation = donationDetails[donationId as keyof typeof donationDetails];
   
+  // Usar datos actualizados si están disponibles
+  const currentTitle = updatedDonation?.title || donation?.title;
+  const currentSubtitle = updatedDonation?.subtitle || donation?.description;
+  const currentStory = updatedDonation?.story || donation?.story;
+  
   if (!donation) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -188,7 +193,7 @@ export const DonationDetail: React.FC<DonationDetailProps> = ({ donationId, onBa
             <div>
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h1 className="text-4xl font-bold text-gray-800 mb-2">{donation.title}</h1>
+                  <h1 className="text-4xl font-bold text-gray-800 mb-2">{currentTitle}</h1>
                   <div className="flex items-center gap-4 text-gray-600 mb-4">
                     <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
                       {donation.category}
@@ -199,7 +204,7 @@ export const DonationDetail: React.FC<DonationDetailProps> = ({ donationId, onBa
                 </div>
               </div>
               
-              <p className="text-gray-700 text-lg leading-relaxed mb-6">{donation.description}</p>
+              <p className="text-gray-700 text-lg leading-relaxed mb-6">{currentSubtitle}</p>
 
               {/* Progress Section */}
               <div className="bg-gradient-to-r from-orange-50 to-pink-50 rounded-2xl p-6 mb-6">
@@ -234,9 +239,9 @@ export const DonationDetail: React.FC<DonationDetailProps> = ({ donationId, onBa
 
             {/* Story */}
             <div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Historia Completa</h3>
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">Historia de {currentTitle?.split(' para ')[1] || 'este caso'}</h3>
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6">
-                <p className="text-gray-700 leading-relaxed">{donation.story}</p>
+                <p className="text-gray-700 leading-relaxed">{currentStory}</p>
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
                     <strong className="text-gray-800">Fecha de inicio:</strong>

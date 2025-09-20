@@ -13,7 +13,16 @@ import { Footer } from './components/Footer';
 const initialShelterData = {
   'refugio-san-angel': {
     donations: [
-      { id: 1, title: "Cirugía de Emergencia para Luna", raised: 3200, goal: 5000, status: "active", images: ["https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800"] },
+      { 
+        id: 1, 
+        title: "Cirugía de Emergencia para Luna", 
+        subtitle: "Luna fue encontrada con una fractura en la pata y necesita cirugía urgente para caminar de nuevo.",
+        story: "Luna fue encontrada hace tres semanas en las calles de la Ciudad de México. Una familia la vio cojeando y claramente en dolor, así que inmediatamente la trajeron a nuestro refugio. Los veterinarios confirmaron que tiene una fractura compleja en su pata trasera izquierda que requiere cirugía inmediata. Sin esta operación, Luna podría quedar coja permanentemente o incluso perder la pata. Es una perrita muy dulce de apenas 2 años que merece una segunda oportunidad para correr y jugar como cualquier perro feliz. La cirugía incluye la colocación de placas de titanio y un período de rehabilitación de 8 semanas. Con tu ayuda, Luna podrá volver a caminar y encontrar una familia amorosa.",
+        raised: 3200, 
+        goal: 5000, 
+        status: "active", 
+        images: ["https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800"] 
+      },
     ],
     dogs: [
       { id: 1, name: "Bella", age: "2 años", breed: "Golden Retriever Mix", status: "available", images: ["https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=800"] },
@@ -22,7 +31,16 @@ const initialShelterData = {
   },
   'patitas-felices': {
     donations: [
-      { id: 2, title: "Cirugía de Emergencia para Max", raised: 2800, goal: 4500, status: "urgent", images: ["https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=800"] },
+      { 
+        id: 2, 
+        title: "Cirugía de Emergencia para Max", 
+        subtitle: "Max fue encontrado con una fractura en la pata y necesita cirugía urgente para caminar de nuevo.",
+        story: "Max fue encontrado hace dos semanas en las calles de Guadalajara. Un transeúnte lo vio cojeando y claramente en dolor, así que inmediatamente lo trajo a nuestro refugio. Los veterinarios confirmaron que tiene una fractura compleja en su pata delantera derecha que requiere cirugía inmediata. Sin esta operación, Max podría quedar cojo permanentemente o incluso perder la pata. Es un perrito muy noble de 4 años que merece una segunda oportunidad para correr y jugar como cualquier perro feliz. La cirugía incluye la colocación de placas de titanio y un período de rehabilitación de 6 semanas. Con tu ayuda, Max podrá volver a caminar y encontrar una familia amorosa.",
+        raised: 2800, 
+        goal: 4500, 
+        status: "urgent", 
+        images: ["https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=800"] 
+      },
     ],
     dogs: [
       { id: 2, name: "Max", age: "4 años", breed: "Labrador", status: "available", images: ["https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=800", "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800"] },
@@ -31,7 +49,16 @@ const initialShelterData = {
   },
   'hogar-canino': {
     donations: [
-      { id: 3, title: "Cirugía de Emergencia para Rocky", raised: 1800, goal: 3500, status: "active", images: ["https://images.pexels.com/photos/1390361/pexels-photo-1390361.jpeg?auto=compress&cs=tinysrgb&w=800"] },
+      { 
+        id: 3, 
+        title: "Cirugía de Emergencia para Rocky", 
+        subtitle: "Rocky fue encontrado con una fractura en la pata y necesita cirugía urgente para caminar de nuevo.",
+        story: "Rocky fue encontrado hace una semana en las calles de Monterrey. Una familia lo encontró cojeando y claramente en dolor, así que inmediatamente lo trajeron a nuestro refugio. Los veterinarios confirmaron que tiene una fractura compleja en su pata trasera derecha que requiere cirugía inmediata. Sin esta operación, Rocky podría quedar cojo permanentemente o incluso perder la pata. Es un perrito muy cariñoso de 3 años que merece una segunda oportunidad para correr y jugar como cualquier perro feliz. La cirugía incluye la colocación de placas de titanio y un período de rehabilitación de 7 semanas. Con tu ayuda, Rocky podrá volver a caminar y encontrar una familia amorosa.",
+        raised: 1800, 
+        goal: 3500, 
+        status: "active", 
+        images: ["https://images.pexels.com/photos/1390361/pexels-photo-1390361.jpeg?auto=compress&cs=tinysrgb&w=800"] 
+      },
     ],
     dogs: [
       { id: 3, name: "Luna", age: "1 año", breed: "Pastor Alemán Mix", status: "available", images: ["https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800", "https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=800"] },

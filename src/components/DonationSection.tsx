@@ -24,7 +24,7 @@ export const DonationSection: React.FC<DonationSectionProps> = ({ onDonationSele
   const formattedDonations = donations.map(donation => ({
     id: donation.id,
     title: donation.title,
-    description: `${donation.title.includes('fue encontrada') || donation.title.includes('fue encontrado') ? donation.title.split(' fue encontrad')[0] + ' necesita cirugía urgente para caminar de nuevo.' : 'Necesita cirugía urgente para caminar de nuevo.'}`,
+    description: donation.subtitle || 'Necesita cirugía urgente para caminar de nuevo.',
     image: donation.images && donation.images.length > 0 ? donation.images[0] : "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800",
     raised: donation.raised,
     goal: donation.goal,
