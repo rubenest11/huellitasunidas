@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Users, Clock } from 'lucide-react';
+import { Heart, Users, Clock, MapPin } from 'lucide-react';
 
 interface Donation {
   id: number;
