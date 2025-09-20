@@ -13,6 +13,12 @@ const shelterMapping = {
   3: 'Hogar Canino Monterrey'
 };
 
+const locationMapping = {
+  1: 'Ciudad de México',
+  2: 'Guadalajara, Jalisco', 
+  3: 'Monterrey, Nuevo León'
+};
+
 export const DonationSection: React.FC<DonationSectionProps> = ({ onDonationSelect, donations }) => {
   // Convertir datos del admin al formato esperado por DonationCard
   const formattedDonations = donations.map(donation => ({
@@ -24,7 +30,8 @@ export const DonationSection: React.FC<DonationSectionProps> = ({ onDonationSele
     goal: donation.goal,
     donors: Math.floor(donation.raised / 50), // Calcular donadores aproximados
     urgent: donation.status === 'urgent',
-    shelter: shelterMapping[donation.id as keyof typeof shelterMapping] || 'Refugio'
+    shelter: shelterMapping[donation.id as keyof typeof shelterMapping] || 'Refugio',
+    location: locationMapping[donation.id as keyof typeof locationMapping] || 'México'
   }));
 
   return (

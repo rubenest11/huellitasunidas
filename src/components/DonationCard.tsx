@@ -42,6 +42,10 @@ export const DonationCard: React.FC<DonationCardProps> = ({ donation, onDonate }
       
       <div className="p-6">
         <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 line-clamp-2">{donation.title}</h3>
+        <div className="flex items-center gap-1 text-gray-600 mb-3">
+          <MapPin className="w-4 h-4" />
+          <span className="text-sm">{donation.location}</span>
+        </div>
         <p className="text-gray-600 mb-4 text-sm leading-relaxed line-clamp-3">{donation.description}</p>
         
         <div className="space-y-4">

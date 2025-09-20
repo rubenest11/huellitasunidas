@@ -21,7 +21,9 @@ export const AdoptionSection: React.FC<AdoptionSectionProps> = ({ onDogSelect, o
     traits: ["Cariñoso", "Juguetón", "Leal"],
     vaccinated: true,
     sterilized: dog.status !== "available" ? true : false,
-    location: "México"
+    location: dog.shelter === 'Refugio San Ángel' ? 'Ciudad de México' :
+              dog.shelter === 'Patitas Felices' ? 'Guadalajara, Jalisco' :
+              dog.shelter === 'Hogar Canino' ? 'Monterrey, Nuevo León' : 'México'
   }));
 
   return (

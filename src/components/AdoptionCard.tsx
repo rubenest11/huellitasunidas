@@ -44,6 +44,10 @@ export const AdoptionCard: React.FC<AdoptionCardProps> = ({ dog, onAdopt, onMore
           <div>
             <h3 className="text-xl sm:text-2xl font-bold text-gray-800">{dog.name}</h3>
             <p className="text-sm sm:text-base text-gray-600">{dog.age} • {dog.breed}</p>
+            <div className="flex items-center gap-1 text-gray-600 mt-1">
+              <MapPin className="w-4 h-4" />
+              <span className="text-sm">{dog.location}</span>
+            </div>
           </div>
           <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
             dog.gender === 'Macho' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800'
@@ -87,11 +91,6 @@ export const AdoptionCard: React.FC<AdoptionCardProps> = ({ dog, onAdopt, onMore
                 Esterilizado
               </span>
             </div>
-          </div>
-          
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <MapPin className="w-4 h-4" />
-            <span>{dog.location}</span>
           </div>
           
           <div className="flex gap-3">
