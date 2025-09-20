@@ -11,41 +11,9 @@ interface Shelter {
 
 interface AdminPanelProps {
   onBack: () => void;
+  shelterData: any;
+  setShelterData: (data: any) => void;
 }
-
-// Mock data para administración por refugio
-const mockDataByShelter = {
-  'refugio-san-angel': {
-    donations: [
-      { id: 1, title: "Cirugía de Emergencia para Luna", raised: 3200, goal: 5000, status: "active", images: ["https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800"] },
-      { id: 4, title: "Alimentación para Perros Senior", raised: 2400, goal: 4000, status: "active", images: ["https://images.pexels.com/photos/58997/pexels-photo-58997.jpeg?auto=compress&cs=tinysrgb&w=800"] },
-    ],
-    dogs: [
-      { id: 1, name: "Bella", age: "2 años", breed: "Golden Retriever Mix", status: "available", images: ["https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=800"] },
-      { id: 4, name: "Charlie", age: "6 meses", breed: "Beagle Mix", status: "available", images: ["https://images.pexels.com/photos/1390361/pexels-photo-1390361.jpeg?auto=compress&cs=tinysrgb&w=800"] },
-    ]
-  },
-  'patitas-felices': {
-    donations: [
-      { id: 2, title: "Refugio para 20 Cachorros", raised: 8500, goal: 12000, status: "active", images: ["https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=800", "https://images.pexels.com/photos/1254140/pexels-photo-1254140.jpeg?auto=compress&cs=tinysrgb&w=800", "https://images.pexels.com/photos/1390361/pexels-photo-1390361.jpeg?auto=compress&cs=tinysrgb&w=800"] },
-      { id: 6, title: "Vacunación Masiva", raised: 6800, goal: 10000, status: "active", images: ["https://images.pexels.com/photos/1254140/pexels-photo-1254140.jpeg?auto=compress&cs=tinysrgb&w=800", "https://images.pexels.com/photos/58997/pexels-photo-58997.jpeg?auto=compress&cs=tinysrgb&w=800"] },
-    ],
-    dogs: [
-      { id: 2, name: "Max", age: "4 años", breed: "Labrador", status: "available", images: ["https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=800", "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800"] },
-      { id: 6, name: "Bruno", age: "5 años", breed: "Pitbull Mix", status: "adopted", images: ["https://images.pexels.com/photos/1254140/pexels-photo-1254140.jpeg?auto=compress&cs=tinysrgb&w=800", "https://images.pexels.com/photos/58997/pexels-photo-58997.jpeg?auto=compress&cs=tinysrgb&w=800", "https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=800"] },
-    ]
-  },
-  'hogar-canino': {
-    donations: [
-      { id: 3, title: "Tratamiento contra Parvovirus", raised: 1800, goal: 3500, status: "urgent", images: ["https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=800", "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800"] },
-      { id: 5, title: "Rehabilitación para Rocky", raised: 5200, goal: 7500, status: "active", images: ["https://images.pexels.com/photos/1390361/pexels-photo-1390361.jpeg?auto=compress&cs=tinysrgb&w=800", "https://images.pexels.com/photos/58997/pexels-photo-58997.jpeg?auto=compress&cs=tinysrgb&w=800"] },
-    ],
-    dogs: [
-      { id: 3, name: "Luna", age: "1 año", breed: "Pastor Alemán Mix", status: "available", images: ["https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800", "https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=800"] },
-      { id: 5, name: "Mía", age: "3 años", breed: "Chihuahua Mix", status: "reserved", images: ["https://images.pexels.com/photos/58997/pexels-photo-58997.jpeg?auto=compress&cs=tinysrgb&w=800"] },
-    ]
-  }
-};
 
 const shelterNames = {
   'refugio-san-angel': 'Refugio San Ángel',
@@ -71,7 +39,7 @@ const mockDogs = [
   { id: 3, name: "Luna", age: "1 año", breed: "Pastor Alemán Mix", status: "adopted", shelter: "Hogar Canino" },
 ];
 
-export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
+export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, setShelterData }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentShelter, setCurrentShelter] = useState<Shelter | null>(null);
   const [showLogin, setShowLogin] = useState(true);
@@ -79,7 +47,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingItem, setEditingItem] = useState<any>(null);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [shelterData, setShelterData] = useState<any>(mockDataByShelter);
 
   const handleLogin = (shelter: Shelter) => {
     setCurrentShelter(shelter);

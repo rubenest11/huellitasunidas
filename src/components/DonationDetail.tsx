@@ -48,9 +48,10 @@ const donationDetails = {
 interface DonationDetailProps {
   donationId: number;
   onBack: () => void;
+  shelterData: any;
 }
 
-export const DonationDetail: React.FC<DonationDetailProps> = ({ donationId, onBack }) => {
+export const DonationDetail: React.FC<DonationDetailProps> = ({ donationId, onBack, shelterData }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showAllImages, setShowAllImages] = useState(false);
   
@@ -61,6 +62,18 @@ export const DonationDetail: React.FC<DonationDetailProps> = ({ donationId, onBa
     window.scrollTo(0, 0);
   }, []);
   
+  // Buscar la donación actualizada en los datos del refugio
+  const findUpdatedDonation = () => {
+    for (const shelter of Object.values(shelterData)) {
+      const foundDonation = (shelter as any).donations.find((d: any) => d.id === donationId);
+      if (foundDonation) {
+        return foundDonation;
+      }
+    }
+    return null;
+  };
+  
+  const updatedDonation = findUpdatedDonation();
   const donation = donationDetails[donationId as keyof typeof donationDetails];
   
   if (!donation) {
@@ -87,6 +100,9 @@ export const DonationDetail: React.FC<DonationDetailProps> = ({ donationId, onBa
   const handleDonationSuccess = async (donorName: string, amount: number, message: string) => {
     await addDonation(donorName, amount, message);
   };
+
+  // Usar imágenes actualizadas si están disponibles
+  const currentImages = updatedDonation?.images || donation.images;
 
   return (
     <div className="min-h-screen bg-white">
@@ -120,7 +136,7 @@ export const DonationDetail: React.FC<DonationDetailProps> = ({ donationId, onBa
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
           <div className="relative">
             <img 
-              src={donation.images[currentImageIndex]} 
+              src={currentImages[currentImageIndex]} 
               alt={`${donation.title} - Foto ${currentImageIndex + 1}`}
               className="w-full h-96 lg:h-[500px] object-cover rounded-2xl"
             />
@@ -133,7 +149,7 @@ export const DonationDetail: React.FC<DonationDetailProps> = ({ donationId, onBa
           </div>
           
           <div className="grid grid-cols-2 gap-4">
-            {donation.images.slice(1, 5).map((image, index) => (
+            {currentImages.slice(1, 5).map((image, index) => (
               <img 
                 key={index}
                 src={image} 
@@ -279,12 +295,12 @@ export const DonationDetail: React.FC<DonationDetailProps> = ({ donationId, onBa
               <ArrowLeft className="w-8 h-8" />
             </button>
             <img 
-              src={donation.images[currentImageIndex]} 
+              src={currentImages[currentImageIndex]} 
               alt={`${donation.title} - Foto ${currentImageIndex + 1}`}
               className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
             />
             <div className="flex justify-center mt-4 gap-2">
-              {donation.images.map((_, index) => (
+              {currentImages.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}
