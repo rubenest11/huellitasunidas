@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Plus, Edit3, Trash2, Search, Filter, Save, X } from 'lucide-react';
+import { ArrowLeft, Plus, Edit3, Trash2, Search, Filter, Save, X, Camera } from 'lucide-react';
 import { LoginForm } from './LoginForm';
 
 interface Shelter {
@@ -79,7 +79,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingItem, setEditingItem] = useState<any>(null);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [uploadingImages, setUploadingImages] = useState(false);
 
   const handleLogin = (shelter: Shelter) => {
     setCurrentShelter(shelter);
@@ -109,37 +108,26 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
 
   const EditForm = ({ item, type, onSave, onCancel }: any) => {
     const [formData, setFormData] = useState(item || {});
-    const [selectedImages, setSelectedImages] = useState<File[]>([]);
-    const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>(
-      item?.images || []
-    );
 
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      onSave({ ...formData, images: imagePreviewUrls });
+      onSave(formData);
     };
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = Array.from(e.target.files || []);
-      if (files.length === 0) return;
-
-      setSelectedImages(prev => [...prev, ...files]);
-      
-      // Crear URLs de vista previa
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          if (event.target?.result) {
-            setImagePreviewUrls(prev => [...prev, event.target!.result as string]);
-          }
-        };
-        reader.readAsDataURL(file);
-      });
+    const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (files) {
+        const newImages = Array.from(files).map(file => URL.createObjectURL(file));
+        setFormData({
+          ...formData,
+          images: [...(formData.images || []), ...newImages]
+        });
+      }
     };
 
-    const removeImage = (index: number) => {
-      setImagePreviewUrls(prev => prev.filter((_, i) => i !== index));
-      setSelectedImages(prev => prev.filter((_, i) => i !== index));
+    const removePhoto = (index: number) => {
+      const updatedImages = formData.images.filter((_: any, i: number) => i !== index);
+      setFormData({ ...formData, images: updatedImages });
     };
 
     return (
@@ -202,62 +190,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                     <option value="paused">Pausada</option>
                   </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Fotos del caso
-                  </label>
-                  <div className="space-y-4">
-                    {/* Vista previa de imágenes */}
-                    {imagePreviewUrls.length > 0 && (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                        {imagePreviewUrls.map((url, index) => (
-                          <div key={index} className="relative group">
-                            <img
-                              src={url}
-                              alt={`Foto ${index + 1}`}
-                              className="w-full h-24 object-cover rounded-lg border border-gray-200"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => removeImage(index)}
-                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    
-                    {/* Input para subir fotos */}
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-orange-400 transition-colors">
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="hidden"
-                        id="image-upload"
-                      />
-                      <label
-                        htmlFor="image-upload"
-                        className="cursor-pointer flex flex-col items-center gap-2"
-                      >
-                        <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                          <Plus className="w-6 h-6 text-orange-600" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-700">
-                            Subir fotos del caso
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            PNG, JPG hasta 5MB cada una
-                          </p>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
               </>
             ) : (
               <>
@@ -306,64 +238,58 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                     <option value="medical">En Tratamiento</option>
                   </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Fotos del perrito
-                  </label>
-                  <div className="space-y-4">
-                    {/* Vista previa de imágenes */}
-                    {imagePreviewUrls.length > 0 && (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                        {imagePreviewUrls.map((url, index) => (
-                          <div key={index} className="relative group">
-                            <img
-                              src={url}
-                              alt={`${formData.name || 'Perrito'} - Foto ${index + 1}`}
-                              className="w-full h-24 object-cover rounded-lg border border-gray-200"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => removeImage(index)}
-                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    
-                    {/* Input para subir fotos */}
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="hidden"
-                        id="dog-image-upload"
-                      />
-                      <label
-                        htmlFor="dog-image-upload"
-                        className="cursor-pointer flex flex-col items-center gap-2"
-                      >
-                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                          <Plus className="w-6 h-6 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-700">
-                            Subir fotos del perrito
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            PNG, JPG hasta 5MB cada una
-                          </p>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
               </>
             )}
+            
+            {/* Photo Upload Section */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {type === 'donations' ? 'Fotos del caso' : 'Fotos del perrito'}
+              </label>
+              <div className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                type === 'donations' 
+                  ? 'border-orange-300 hover:border-orange-400 bg-orange-50' 
+                  : 'border-blue-300 hover:border-blue-400 bg-blue-50'
+              }`}>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                  id="photo-upload"
+                />
+                <label htmlFor="photo-upload" className="cursor-pointer">
+                  <Camera className={`w-12 h-12 mx-auto mb-4 ${
+                    type === 'donations' ? 'text-orange-400' : 'text-blue-400'
+                  }`} />
+                  <p className="text-gray-600 mb-2">Haz clic para subir fotos o arrastra aquí</p>
+                  <p className="text-sm text-gray-500">PNG, JPG hasta 5MB cada una</p>
+                </label>
+              </div>
+              
+              {/* Photo Preview Grid */}
+              {formData.images && formData.images.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
+                  {formData.images.map((image: string, index: number) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={image}
+                        alt={`Foto ${index + 1}`}
+                        className="w-full h-24 object-cover rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removePhoto(index)}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Refugio</label>
@@ -514,25 +440,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                         <div className="font-medium text-gray-800">{donation.title}</div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-2 mb-1">
-                          {donation.images && donation.images.length > 0 && (
-                            <div className="flex -space-x-1">
-                              {donation.images.slice(0, 3).map((img: string, idx: number) => (
-                                <img
-                                  key={idx}
-                                  src={img}
-                                  alt={`Foto ${idx + 1}`}
-                                  className="w-6 h-6 rounded-full border-2 border-white object-cover"
-                                />
-                              ))}
-                              {donation.images.length > 3 && (
-                                <div className="w-6 h-6 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs text-gray-600">
-                                  +{donation.images.length - 3}
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
                         <div className="text-sm text-gray-600">
                           ${donation.raised.toLocaleString()} / ${donation.goal.toLocaleString()}
                         </div>
@@ -595,23 +502,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                     <tr key={dog.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
                         <div className="font-medium text-gray-800">{dog.name}</div>
-                        {dog.images && dog.images.length > 0 && (
-                          <div className="flex -space-x-1 mt-1">
-                            {dog.images.slice(0, 3).map((img: string, idx: number) => (
-                              <img
-                                key={idx}
-                                src={img}
-                                alt={`${dog.name} - Foto ${idx + 1}`}
-                                className="w-6 h-6 rounded-full border-2 border-white object-cover"
-                              />
-                            ))}
-                            {dog.images.length > 3 && (
-                              <div className="w-6 h-6 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs text-gray-600">
-                                +{dog.images.length - 3}
-                              </div>
-                            )}
-                          </div>
-                        )}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">{dog.age}</td>
                       <td className="px-6 py-4 text-sm text-gray-600">{dog.breed}</td>
