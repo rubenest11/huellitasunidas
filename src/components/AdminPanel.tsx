@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Edit, Save, X, Users, Heart, DollarSign, Home, Building2, BarChart3, Calendar, MapPin, Phone, Mail, Globe, Camera, Upload, Check, AlertCircle, Trash2, Edit3, Search, Filter } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, Plus, Edit, Save, X, Users, Heart, DollarSign, Home, Building2, BarChart3, Calendar, MapPin, Phone, Mail, Globe, Camera, Upload, Check, AlertCircle, Trash2 } from 'lucide-react';
 import { LoginForm } from './LoginForm';
 
 interface Shelter {
@@ -79,14 +79,6 @@ const mockDogs = [
   { id: 2, name: "Max", age: "4 años", breed: "Labrador", status: "available", shelter: "Patitas Felices" },
   { id: 3, name: "Luna", age: "1 año", breed: "Pastor Alemán Mix", status: "adopted", shelter: "Hogar Canino" },
 ];
-
-// Función para generar ID único de refugio
-const generateShelterID = () => {
-  const prefix = 'REF';
-  const timestamp = Date.now().toString().slice(-6);
-  const random = Math.random().toString(36).substr(2, 3).toUpperCase();
-  return `${prefix}${timestamp}${random}`;
-};
 
 // Componente para editar perfil del refugio
 const ShelterProfileEditor: React.FC<{
@@ -533,6 +525,9 @@ const ShelterProfileEditor: React.FC<{
           </div>
         </div>
       </div>
+
+      {/* Modal de confirmación de eliminación */}
+      {showDeleteConfirmation && <DeleteConfirmationModal />}
     </div>
   );
 };
@@ -541,13 +536,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentShelter, setCurrentShelter] = useState<Shelter | null>(null);
   const [showLogin, setShowLogin] = useState(true);
-  const [activeTab, setActiveTab] = useState<'donations' | 'adoptions' | 'shelter'>('donations');
+  const [activeTab, setActiveTab] = useState<'donations' | 'adoptions' | 'shelters'>('donations');
   const [searchTerm, setSearchTerm] = useState('');
   const [editingItem, setEditingItem] = useState<any>(null);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const [deleteConfirmationText, setDeleteConfirmationText] = useState('');
-  const [deletingShelter, setDeletingShelter] = useState(false);
 
   const handleLogin = (shelter: Shelter) => {
     setCurrentShelter(shelter);
@@ -559,51 +551,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
     setCurrentShelter(null);
     setIsAuthenticated(false);
     setShowLogin(true);
-  };
-
-  const handleUpdateShelterProfile = (updatedData: any) => {
-    if (!currentShelter) return;
-    
-    try {
-      // Actualizar en localStorage de refugios
-      const savedShelters = localStorage.getItem('huellitasUnidas_shelters');
-      const shelters = savedShelters ? JSON.parse(savedShelters) : {};
-      
-      shelters[currentShelter.id] = {
-        ...shelters[currentShelter.id],
-        ...updatedData
-      };
-      
-      localStorage.setItem('huellitasUnidas_shelters', JSON.stringify(shelters));
-      
-      // También actualizar en la sección pública de refugios
-      const publicSheltersData = JSON.parse(localStorage.getItem('huellitasUnidas_publicShelters') || '{}');
-      publicSheltersData[currentShelter.id] = {
-        ...publicSheltersData[currentShelter.id],
-        name: updatedData.name,
-        location: updatedData.location,
-        description: updatedData.description,
-        image: updatedData.image,
-        established: updatedData.established,
-        contact: {
-          phone: updatedData.phone,
-          email: updatedData.email,
-          website: updatedData.website
-        },
-        services: updatedData.services || [],
-        capacity: updatedData.capacity || 0,
-        currentDogs: updatedData.currentDogs || 0,
-        dogsRescued: updatedData.dogsRescued || 0,
-        dogsAdopted: updatedData.dogsAdopted || 0,
-        totalRaised: updatedData.totalRaised || 0,
-        activeCampaigns: updatedData.activeCampaigns || 0
-      };
-      localStorage.setItem('huellitasUnidas_publicShelters', JSON.stringify(publicSheltersData));
-      
-      console.log('Perfil del refugio actualizado exitosamente');
-    } catch (error) {
-      console.error('Error updating shelter profile:', error);
-    }
   };
 
   if (showLogin || !isAuthenticated || !currentShelter) {
@@ -1228,6 +1175,30 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
         newData[shelterKey].dogs = newData[shelterKey].dogs.filter((dog: any) => dog.id !== id);
       }
       
+      // También actualizar en la sección pública de refugios
+      const publicSheltersData = JSON.parse(localStorage.getItem('huellitasUnidas_publicShelters') || '{}');
+      publicSheltersData[currentShelter.id] = {
+        ...publicSheltersData[currentShelter.id],
+        name: updatedData.name,
+        location: updatedData.location,
+        description: updatedData.description,
+        image: updatedData.image,
+        established: updatedData.established,
+        contact: {
+          phone: updatedData.phone,
+          email: updatedData.email,
+          website: updatedData.website
+        },
+        services: updatedData.services ? updatedData.services.split(',').map(s => s.trim()) : [],
+        capacity: parseInt(updatedData.capacity) || 0,
+        currentDogs: parseInt(updatedData.currentDogs) || 0,
+        dogsRescued: parseInt(updatedData.dogsRescued) || 0,
+        dogsAdopted: parseInt(updatedData.dogsAdopted) || 0,
+        totalRaised: parseInt(updatedData.totalRaised) || 0,
+        activeCampaigns: parseInt(updatedData.activeCampaigns) || 0
+      };
+      localStorage.setItem('huellitasUnidas_publicShelters', JSON.stringify(publicSheltersData));
+      
       // Actualizar el estado y guardar en localStorage
       setShelterData(newData);
     }
@@ -1487,6 +1458,20 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
               onUpdateShelter={handleUpdateShelterProfile}
             />
           )}
+          {activeTab === 'shelters' && (
+            <>
+              {currentShelter.id === 'super-admin' ? (
+                <SuperAdminPanel />
+              ) : (
+                <ShelterProfilePanel 
+                  shelter={currentShelter} 
+                  currentShelterColor={currentShelterColor}
+                  currentDonations={currentDonations}
+                  currentDogs={currentDogs}
+                />
+              )}
+            </>
+          )}
         </div>
       </div>
 
@@ -1504,4 +1489,355 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
       )}
     </div>
   );
+
+  // Componente Super Admin Panel
+  const SuperAdminPanel = () => {
+    const [allRegisteredShelters, setAllRegisteredShelters] = useState<any[]>([]);
+    const [searchTerm, setSearchTerm] = useState('');
+
+    useEffect(() => {
+      loadAllShelters();
+    }, []);
+
+    const loadAllShelters = () => {
+      // Refugios predeterminados (excluyendo super admin)
+      const defaultShelters = [
+        {
+          id: 'refugio-san-angel',
+          shelterID: 'RSA01',
+          name: 'Refugio San Ángel',
+          location: 'Ciudad de México',
+          email: 'contacto@refugiosanangel.org',
+          phone: '+52 55 1234 5678',
+          registrationDate: '15 de marzo, 2023',
+          createdAt: '2023-03-15T00:00:00.000Z'
+        },
+        {
+          id: 'patitas-felices',
+          shelterID: 'PF002',
+          name: 'Patitas Felices',
+          location: 'Guadalajara, Jalisco',
+          email: 'adopciones@patitasfelices.org',
+          phone: '+52 33 9876 5432',
+          registrationDate: '22 de abril, 2023',
+          createdAt: '2023-04-22T00:00:00.000Z'
+        },
+        {
+          id: 'hogar-canino',
+          shelterID: 'HC003',
+          name: 'Hogar Canino',
+          location: 'Monterrey, Nuevo León',
+          email: 'info@hogarcanino.org',
+          phone: '+52 81 5555 4444',
+          registrationDate: '10 de mayo, 2023',
+          createdAt: '2023-05-10T00:00:00.000Z'
+        }
+      ];
+
+      // Refugios registrados dinámicamente
+      try {
+        const savedShelters = localStorage.getItem('huellitasUnidas_shelters');
+        const dynamicShelters = savedShelters ? Object.values(JSON.parse(savedShelters)) : [];
+        
+        const allShelters = [...defaultShelters, ...dynamicShelters];
+        setAllRegisteredShelters(allShelters);
+      } catch (error) {
+        console.error('Error loading shelters:', error);
+        setAllRegisteredShelters(defaultShelters);
+      }
+    };
+
+    const filteredShelters = allRegisteredShelters.filter(shelter =>
+      shelter.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      shelter.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      shelter.shelterID.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const totalShelters = allRegisteredShelters.length;
+    const thisWeekShelters = allRegisteredShelters.filter(shelter => {
+      const registrationDate = new Date(shelter.createdAt);
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      return registrationDate >= oneWeekAgo;
+    }).length;
+
+    return (
+      <div className="p-6">
+        <div className="bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-2xl p-8 mb-8">
+          <h3 className="text-3xl font-bold mb-2">🔧 Panel Super Administrador</h3>
+          <p className="text-lg opacity-90">Gestión completa de refugios registrados</p>
+        </div>
+
+        {/* Estadísticas */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-blue-50 rounded-xl p-6">
+            <h4 className="text-lg font-semibold text-blue-800 mb-2">Total Refugios</h4>
+            <p className="text-4xl font-bold text-blue-600">{totalShelters}</p>
+            <p className="text-sm text-blue-700">Refugios registrados</p>
+          </div>
+          <div className="bg-green-50 rounded-xl p-6">
+            <h4 className="text-lg font-semibold text-green-800 mb-2">Activos</h4>
+            <p className="text-4xl font-bold text-green-600">{totalShelters}</p>
+            <p className="text-sm text-green-700">Refugios activos</p>
+          </div>
+          <div className="bg-purple-50 rounded-xl p-6">
+            <h4 className="text-lg font-semibold text-purple-800 mb-2">Esta Semana</h4>
+            <p className="text-4xl font-bold text-purple-600">{thisWeekShelters}</p>
+            <p className="text-sm text-purple-700">Nuevos registros</p>
+          </div>
+        </div>
+
+        {/* Búsqueda */}
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Buscar por nombre, ciudad o ID..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            />
+          </div>
+        </div>
+
+        {/* Tabla de Refugios */}
+        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-red-50">
+                <tr>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-red-700">ID</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-red-700">Refugio</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-red-700">Ubicación</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-red-700">Contacto</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-red-700">Registro</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredShelters.map((shelter) => (
+                  <tr key={shelter.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4">
+                      <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-mono font-semibold">
+                        {shelter.shelterID}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="font-semibold text-gray-800">{shelter.name}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-1 text-gray-600">
+                        <MapPin className="w-4 h-4" />
+                        <span>{shelter.location}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="space-y-1 text-sm">
+                        <div className="flex items-center gap-1 text-gray-600">
+                          <Phone className="w-3 h-3" />
+                          <span>{shelter.phone}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-gray-600">
+                          <Mail className="w-3 h-3" />
+                          <span className="truncate max-w-[200px]">{shelter.email}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-1 text-gray-600">
+                        <Calendar className="w-4 h-4" />
+                        <span className="text-sm">{shelter.registrationDate}</span>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {filteredShelters.length === 0 && (
+          <div className="text-center py-12">
+            <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500 text-lg">No se encontraron refugios</p>
+            <p className="text-gray-400">Intenta con otros términos de búsqueda</p>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Componente Perfil del Refugio
+  const ShelterProfilePanel = ({ shelter, currentShelterColor, currentDonations, currentDogs }: any) => {
+    const [editingProfile, setEditingProfile] = useState(false);
+    const [profileData, setProfileData] = useState({
+      name: shelter.name,
+      location: shelter.location,
+      email: shelter.email || 'contacto@refugio.org',
+      phone: shelter.phone || '+52 55 0000 0000'
+    });
+
+    const handleSaveProfile = () => {
+      // Aquí guardarías los cambios del perfil
+      console.log('Guardando perfil:', profileData);
+      setEditingProfile(false);
+      // TODO: Implementar guardado real
+    };
+
+    return (
+      <div className="p-6">
+        <div className={`bg-gradient-to-r ${currentShelterColor} text-white rounded-2xl p-8 mb-6`}>
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="text-2xl font-bold mb-2">{shelter.name}</h3>
+              <p className="text-lg opacity-90">{shelter.location}</p>
+              <div className="mt-2">
+                <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm font-mono">
+                  ID: {shelter.shelterID}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="bg-orange-50 rounded-xl p-6">
+            <h4 className="text-lg font-semibold text-orange-800 mb-2">Campañas de Donación</h4>
+            <p className="text-3xl font-bold text-orange-600">{currentDonations.length}</p>
+            <p className="text-sm text-orange-700">Campañas activas</p>
+          </div>
+          <div className="bg-blue-50 rounded-xl p-6">
+            <h4 className="text-lg font-semibold text-blue-800 mb-2">Perritos en Adopción</h4>
+            <p className="text-3xl font-bold text-blue-600">{currentDogs.length}</p>
+            <p className="text-sm text-blue-700">Esperando hogar</p>
+          </div>
+        </div>
+
+        {/* Información de Registro */}
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h4 className="text-xl font-bold text-gray-800">Información de Registro</h4>
+            <button
+              onClick={() => setEditingProfile(!editingProfile)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              <Edit3 className="w-4 h-4" />
+              {editingProfile ? 'Cancelar' : 'Editar'}
+            </button>
+          </div>
+
+          {editingProfile ? (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del Refugio</label>
+                <input
+                  type="text"
+                  value={profileData.name}
+                  onChange={(e) => setProfileData({...profileData, name: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Ubicación</label>
+                <input
+                  type="text"
+                  value={profileData.location}
+                  onChange={(e) => setProfileData({...profileData, location: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                <input
+                  type="tel"
+                  value={profileData.phone}
+                  onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Correo Electrónico</label>
+                <input
+                  type="email"
+                  value={profileData.email}
+                  onChange={(e) => setProfileData({...profileData, email: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <button
+                onClick={handleSaveProfile}
+                className="w-full bg-green-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
+              >
+                <Save className="w-5 h-5" />
+                Guardar Cambios
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Building2 className="w-5 h-5 text-gray-400" />
+                  <div>
+                    <div className="text-sm text-gray-500">Nombre</div>
+                    <div className="font-medium text-gray-800">{shelter.name}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-5 h-5 text-gray-400" />
+                  <div>
+                    <div className="text-sm text-gray-500">Ubicación</div>
+                    <div className="font-medium text-gray-800">{shelter.location}</div>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Phone className="w-5 h-5 text-gray-400" />
+                  <div>
+                    <div className="text-sm text-gray-500">Teléfono</div>
+                    <div className="font-medium text-gray-800">{shelter.phone || '+52 55 0000 0000'}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Mail className="w-5 h-5 text-gray-400" />
+                  <div>
+                    <div className="text-sm text-gray-500">Correo</div>
+                    <div className="font-medium text-gray-800">{shelter.email || 'contacto@refugio.org'}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Zona de Peligro - Eliminar Refugio */}
+        <div className="bg-red-50 border border-red-200 rounded-xl p-6 mt-8">
+          <h3 className="text-xl font-bold text-red-800 mb-4">⚠️ Zona de Peligro</h3>
+          <div className="bg-white rounded-lg p-4 border border-red-200">
+            <h4 className="font-semibold text-red-700 mb-2">Eliminar Refugio Permanentemente</h4>
+            <p className="text-red-600 text-sm mb-4">
+              Esta acción eliminará completamente el refugio y todos sus datos asociados:
+            </p>
+            <ul className="text-red-600 text-sm mb-4 space-y-1">
+              <li>• Todos los perritos registrados</li>
+              <li>• Todas las campañas de donación</li>
+              <li>• Información del perfil público</li>
+              <li>• Acceso al panel administrativo</li>
+              <li>• Historial y estadísticas</li>
+            </ul>
+            <p className="text-red-700 font-semibold text-sm mb-4">
+              ⚠️ Esta acción NO se puede deshacer
+            </p>
+            <button
+              onClick={() => setShowDeleteConfirmation(true)}
+              className="bg-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors flex items-center gap-2"
+            >
+              <Trash2 className="w-5 h-5" />
+              Eliminar Refugio Permanentemente
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 };
