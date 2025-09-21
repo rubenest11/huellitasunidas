@@ -11,6 +11,12 @@ interface Shelter {
 
 const shelters: Shelter[] = [
   {
+    id: 'super-admin',
+    name: 'Super Admin',
+    code: '777777',
+    location: 'Sistema'
+  },
+  {
     id: 'refugio-san-angel',
     name: 'Refugio San Ángel',
     code: '248159',
@@ -66,7 +72,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onCancel }) => {
   useEffect(() => {
     const defaultShelters = shelters;
     const registeredShelters = loadRegisteredShelters();
-    setAllShelters([...defaultShelters, ...registeredShelters]);
+    // Super Admin siempre primero, luego refugios predeterminados, luego registrados
+    const superAdmin = defaultShelters.find(s => s.id === 'super-admin');
+    const otherDefaults = defaultShelters.filter(s => s.id !== 'super-admin');
+    setAllShelters([superAdmin, ...otherDefaults, ...registeredShelters].filter(Boolean));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -132,7 +141,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onCancel }) => {
                 <option value="">Seleccionar refugio...</option>
                 {allShelters.map((shelter) => (
                   <option key={shelter.id} value={shelter.id}>
-                    {shelter.name} - {shelter.location}
+                    {shelter.id === 'super-admin' ? 
+                      '🔧 Super Admin - Sistema' : 
+                      `${shelter.name} - ${shelter.location}${shelter.shelterID ? ` (ID: ${shelter.shelterID})` : ''}`
+                    }
                   </option>
                 ))}
               </select>

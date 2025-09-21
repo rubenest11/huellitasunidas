@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
 import { Building2, MapPin, Mail, Phone, Lock, Eye, EyeOff, User, Check } from 'lucide-react';
 
+// Función para generar ID único de 5 caracteres
+const generateShelterID = () => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let result = '';
+  for (let i = 0; i < 5; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
+
 interface ShelterRegistrationFormProps {
   onRegistrationSuccess: (shelterData: any) => void;
   onCancel: () => void;
@@ -73,13 +83,21 @@ export const ShelterRegistrationForm: React.FC<ShelterRegistrationFormProps> = (
         .replace(/[^a-z0-9-]/g, '')
         .substring(0, 20);
 
+      const shelterID = generateShelterID();
+
       const newShelterData = {
         id: shelterKey,
+        shelterID: shelterID,
         name: formData.name,
         code: formData.password,
         location: formData.city,
         email: formData.email,
         phone: formData.phone,
+        registrationDate: new Date().toLocaleDateString('es-ES', {
+          year: 'numeric',
+          month: 'long', 
+          day: 'numeric'
+        }),
         createdAt: new Date().toISOString(),
         donations: [],
         dogs: []
