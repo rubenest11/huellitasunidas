@@ -51,7 +51,16 @@ const loadShelterData = () => {
       ],
       dogs: [
         { id: 1, name: "Bella", age: "2 años", breed: "Golden Retriever Mix", status: "available", images: ["https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=800"] },
-        { id: 4, name: "Charlie", age: "6 meses", breed: "Beagle Mix", status: "available", images: ["https://images.pexels.com/photos/1390361/pexels-photo-1390361.jpeg?auto=compress&cs=tinysrgb&w=800"] },
+        { 
+          id: 4, 
+          name: "Charlie", 
+          age: "6 meses", 
+          breed: "Beagle Mix", 
+          status: "available", 
+          images: ["https://images.pexels.com/photos/1390361/pexels-photo-1390361.jpeg?auto=compress&cs=tinysrgb&w=800"],
+          personality: { energy: 85, friendliness: 95, training: 70, independence: 40 },
+          requirements: ["Casa con patio", "Familia activa", "Experiencia con perros"]
+        },
       ]
     },
     'patitas-felices': {
@@ -180,7 +189,6 @@ function App() {
       <div className="min-h-screen bg-white">
         <DogDetail 
           dogId={selectedDog} 
-          shelterData={shelterData}
           onBack={() => {
             setSelectedDog(null);
           }} 

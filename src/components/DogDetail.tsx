@@ -99,15 +99,38 @@ interface DogDetailProps {
 export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showAllImages, setShowAllImages] = useState(false);
+  const [shelterData, setShelterData] = useState(() => {
+    try {
+      const savedData = localStorage.getItem('huellitasUnidas_shelterData');
+      return savedData ? JSON.parse(savedData) : {};
+    } catch {
+      return {};
+    }
+  });
   
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   
+  // Buscar el perro en los datos del refugio
+  const findDogInShelterData = () => {
+    for (const shelter of Object.values(shelterData)) {
+      const foundDog = (shelter as any).dogs?.find((d: any) => d.id === dogId);
+      if (foundDog) {
+        return foundDog;
+      }
+    }
+    return null;
+  };
+  
+  const shelterDog = findDogInShelterData();
   const dog = dogDetails[dogId as keyof typeof dogDetails];
   
-  if (!dog) {
+  // Usar datos del refugio si están disponibles, sino usar datos mock
+  const currentDog = shelterDog || dog;
+  
+  if (!currentDog) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -122,6 +145,47 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
       </div>
     );
   }
+  
+  // Combinar datos del refugio con datos mock para campos faltantes
+  const dogData = {
+    ...dog,
+    ...shelterDog,
+    // Asegurar que los campos críticos estén presentes
+    name: shelterDog?.name || dog?.name || 'Perrito',
+    age: shelterDog?.age || dog?.age || '1 año',
+    breed: shelterDog?.breed || dog?.breed || 'Mestizo',
+    size: shelterDog?.size || dog?.size || 'Mediano',
+    gender: shelterDog?.gender || dog?.gender || 'Hembra',
+    weight: shelterDog?.weight || dog?.weight || '20 kg',
+    height: shelterDog?.height || dog?.height || '50 cm',
+    description: shelterDog?.description || dog?.description || 'Un perrito muy especial',
+    story: shelterDog?.story || dog?.story || 'Historia del perrito',
+    traits: Array.isArray(shelterDog?.traits) ? shelterDog.traits : 
+            (shelterDog?.traits ? shelterDog.traits.split(',').map(t => t.trim()) : 
+            (dog?.traits || ['Cariñoso', 'Juguetón'])),
+    vaccinated: shelterDog?.vaccinated !== undefined ? shelterDog.vaccinated : (dog?.vaccinated || false),
+    sterilized: shelterDog?.sterilized !== undefined ? shelterDog.sterilized : (dog?.sterilized || false),
+    personality: shelterDog?.personality || dog?.personality || {
+      energy: 70,
+      friendliness: 85,
+      training: 60,
+      independence: 50
+    },
+    requirements: shelterDog?.requirements || dog?.requirements || [
+      "Hogar amoroso y responsable",
+      "Tiempo para ejercicio diario",
+      "Experiencia con mascotas"
+    ],
+    medicalInfo: shelterDog?.medicalInfo || dog?.medicalInfo || 'Información médica no disponible',
+    images: shelterDog?.images || dog?.images || ["https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=800"],
+    location: shelterDog?.location || dog?.location || 'México',
+    contact: dog?.contact || {
+      name: "Coordinador de Adopciones",
+      phone: "+52 55 1234 5678",
+      email: "adopciones@huellitasunidas.org",
+      whatsapp: "+52 55 1234 5678"
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -155,11 +219,11 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
           <div className="relative">
             <img 
-              src={dog.images[currentImageIndex]} 
-              alt={`${dog.name} - Foto ${currentImageIndex + 1}`}
+              src={dogData.images[currentImageIndex]} 
+              alt={`${dogData.name} - Foto ${currentImageIndex + 1}`}
               className="w-full h-96 lg:h-[500px] object-cover rounded-2xl"
             />
-            <button 
+            {dogData.urgent && (
               onClick={() => setShowAllImages(true)}
               className="absolute bottom-4 right-4 bg-white bg-opacity-90 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-opacity-100 transition-all"
             >
@@ -169,11 +233,11 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
           </div>
           
           <div className="grid grid-cols-2 gap-4">
-            {dog.images.slice(1, 5).map((image, index) => (
+            {dogData.images.slice(1, 5).map((image, index) => (
               <img 
                 key={index}
                 src={image} 
-                alt={`${dog.name} - Foto ${index + 2}`}
+                alt={`${dogData.name} - Foto ${index + 2}`}
                 className="w-full h-44 lg:h-60 object-cover rounded-xl cursor-pointer hover:opacity-80 transition-opacity"
                 onClick={() => setCurrentImageIndex(index + 1)}
               />
@@ -189,48 +253,48 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
             <div>
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h1 className="text-4xl font-bold text-gray-800 mb-2">{dog.name}</h1>
+                  <h1 className="text-4xl font-bold text-gray-800 mb-2">{dogData.name}</h1>
                   <div className="flex items-center gap-4 text-gray-600">
-                    <span>{dog.breed}</span>
+                    <span>{dogData.breed}</span>
                     <span>•</span>
-                    <span>{dog.age}</span>
+                    <span>{dogData.age}</span>
                     <span>•</span>
                     <div className="flex items-center gap-1">
                       <MapPin className="w-4 h-4" />
-                      <span>{dog.location}</span>
+                      <span>{dogData.location}</span>
                     </div>
                   </div>
                 </div>
                 <div className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                  dog.gender === 'Macho' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800'
+                  dogData.gender === 'Macho' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800'
                 }`}>
-                  {dog.gender}
+                  {dogData.gender}
                 </div>
               </div>
               
-              <p className="text-gray-700 text-lg leading-relaxed">{dog.description}</p>
+              <p className="text-gray-700 text-lg leading-relaxed">{dogData.description}</p>
             </div>
 
             {/* Characteristics */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-gray-50 rounded-xl p-4 text-center">
                 <Weight className="w-6 h-6 text-gray-600 mx-auto mb-2" />
-                <div className="font-semibold text-gray-800">{dog.weight}</div>
+                <div className="font-semibold text-gray-800">{dogData.weight}</div>
                 <div className="text-sm text-gray-600">Peso</div>
               </div>
               <div className="bg-gray-50 rounded-xl p-4 text-center">
                 <Ruler className="w-6 h-6 text-gray-600 mx-auto mb-2" />
-                <div className="font-semibold text-gray-800">{dog.height}</div>
+                <div className="font-semibold text-gray-800">{dogData.height}</div>
                 <div className="text-sm text-gray-600">Altura</div>
               </div>
               <div className="bg-gray-50 rounded-xl p-4 text-center">
                 <Calendar className="w-6 h-6 text-gray-600 mx-auto mb-2" />
-                <div className="font-semibold text-gray-800">{dog.age}</div>
+                <div className="font-semibold text-gray-800">{dogData.age}</div>
                 <div className="text-sm text-gray-600">Edad</div>
               </div>
               <div className="bg-gray-50 rounded-xl p-4 text-center">
                 <MapPin className="w-6 h-6 text-gray-600 mx-auto mb-2" />
-                <div className="font-semibold text-gray-800">{dog.size}</div>
+                <div className="font-semibold text-gray-800">{dogData.size}</div>
                 <div className="text-sm text-gray-600">Tamaño</div>
               </div>
             </div>
@@ -239,7 +303,7 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
             <div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">Personalidad</h3>
               <div className="space-y-4">
-                {Object.entries(dog.personality).map(([trait, value]) => (
+                {Object.entries(dogData.personality).map(([trait, value]) => (
                   <div key={trait}>
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-medium text-gray-700 capitalize">
@@ -262,11 +326,11 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
 
             {/* Story */}
             <div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Historia de {dog.name}</h3>
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">Historia de {dogData.name}</h3>
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6">
-                <p className="text-gray-700 leading-relaxed">{dog.story}</p>
+                <p className="text-gray-700 leading-relaxed">{dogData.story}</p>
                 <div className="mt-4 text-sm text-gray-600">
-                  <strong>Fecha de rescate:</strong> {dog.rescueDate}
+                  <strong>Fecha de rescate:</strong> {dogData.rescueDate || 'No disponible'}
                 </div>
               </div>
             </div>
@@ -275,7 +339,7 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
             <div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">Características</h3>
               <div className="flex flex-wrap gap-3">
-                {dog.traits.map((trait, index) => (
+                {dogData.traits.map((trait, index) => (
                   <span 
                     key={index}
                     className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium"
@@ -290,7 +354,7 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
             <div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">Requisitos para Adopción</h3>
               <ul className="space-y-3">
-                {dog.requirements.map((requirement, index) => (
+                {dogData.requirements.map((requirement, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
                     <span className="text-gray-700">{requirement}</span>
@@ -305,27 +369,27 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
               <div className="bg-green-50 rounded-2xl p-6">
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div className="flex items-center gap-2">
-                    {dog.vaccinated ? (
+                    {dogData.vaccinated ? (
                       <Check className="w-5 h-5 text-green-500" />
                     ) : (
                       <X className="w-5 h-5 text-red-500" />
                     )}
-                    <span className={dog.vaccinated ? 'text-green-700' : 'text-red-700'}>
+                    <span className={dogData.vaccinated ? 'text-green-700' : 'text-red-700'}>
                       Vacunado
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    {dog.sterilized ? (
+                    {dogData.sterilized ? (
                       <Check className="w-5 h-5 text-green-500" />
                     ) : (
                       <X className="w-5 h-5 text-red-500" />
                     )}
-                    <span className={dog.sterilized ? 'text-green-700' : 'text-red-700'}>
+                    <span className={dogData.sterilized ? 'text-green-700' : 'text-red-700'}>
                       Esterilizado
                     </span>
                   </div>
                 </div>
-                <p className="text-gray-700">{dog.medicalInfo}</p>
+                <p className="text-gray-700">{dogData.medicalInfo}</p>
               </div>
             </div>
           </div>
@@ -334,7 +398,7 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
           <div className="lg:col-span-1">
             <div className="sticky top-24">
               <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-lg">
-                <h3 className="text-xl font-bold text-gray-800 mb-4">¿Interesado en adoptar a {dog.name}?</h3>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">¿Interesado en adoptar a {dogData.name}?</h3>
                 
                 <div className="space-y-4 mb-6">
                   <div className="flex items-center gap-3">
@@ -342,7 +406,7 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
                       <Phone className="w-6 h-6 text-blue-600" />
                     </div>
                     <div>
-                      <div className="font-medium text-gray-800">{dog.contact.name}</div>
+                      <div className="font-medium text-gray-800">{dogData.contact.name}</div>
                       <div className="text-sm text-gray-600">Coordinadora de Adopciones</div>
                     </div>
                   </div>
@@ -350,7 +414,7 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
 
                 <div className="space-y-3 mb-6">
                   <a 
-                    href={`tel:${dog.contact.phone}`}
+                    href={`tel:${dogData.contact.phone}`}
                     className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold py-3 px-4 rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 flex items-center justify-center gap-2"
                   >
                     <Phone className="w-5 h-5" />
@@ -358,7 +422,7 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
                   </a>
                   
                   <a 
-                    href={`https://wa.me/${dog.contact.whatsapp.replace(/\s+/g, '').replace('+', '')}`}
+                    href={`https://wa.me/${dogData.contact.whatsapp.replace(/\s+/g, '').replace('+', '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full bg-green-500 text-white font-semibold py-3 px-4 rounded-xl hover:bg-green-600 transition-all duration-300 flex items-center justify-center gap-2"
@@ -368,7 +432,7 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
                   </a>
                   
                   <a 
-                    href={`mailto:${dog.contact.email}?subject=Interés en adoptar a ${dog.name}`}
+                    href={`mailto:${dogData.contact.email}?subject=Interés en adoptar a ${dogData.name}`}
                     className="w-full border-2 border-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-xl hover:border-blue-500 hover:text-blue-500 transition-all duration-300 flex items-center justify-center gap-2"
                   >
                     <Mail className="w-5 h-5" />
@@ -396,12 +460,12 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
               <X className="w-8 h-8" />
             </button>
             <img 
-              src={dog.images[currentImageIndex]} 
-              alt={`${dog.name} - Foto ${currentImageIndex + 1}`}
+              src={dogData.images[currentImageIndex]} 
+              alt={`${dogData.name} - Foto ${currentImageIndex + 1}`}
               className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
             />
             <div className="flex justify-center mt-4 gap-2">
-              {dog.images.map((_, index) => (
+              {dogData.images.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}

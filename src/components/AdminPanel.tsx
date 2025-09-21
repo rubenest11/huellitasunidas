@@ -634,7 +634,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
           sterilized: data.sterilized || false,
           medicalInfo: data.medicalInfo || '',
           status: data.status || 'available',
-          images: data.images || []
+          images: data.images || [],
+          personality: data.personality || {
+            energy: 50,
+            friendliness: 50,
+            training: 50,
+            independence: 50
+          },
+          requirements: data.requirements || []
         };
         newData[shelterKey].dogs.push(newDog);
       }

@@ -21,6 +21,10 @@ export const AdoptionSection: React.FC<AdoptionSectionProps> = ({ onDogSelect, o
     traits: dog.traits || ["Cariñoso", "Juguetón", "Leal"],
     vaccinated: dog.vaccinated || false,
     sterilized: dog.sterilized || false,
+    personality: dog.personality || { energy: 50, friendliness: 50, training: 50, independence: 50 },
+    requirements: dog.requirements || [],
+    medicalInfo: dog.medicalInfo || '',
+    story: dog.story || '',
     location: dog.shelter === 'Refugio San Ángel' ? 'Ciudad de México' :
               dog.shelter === 'Patitas Felices' ? 'Guadalajara, Jalisco' :
               dog.shelter === 'Hogar Canino' ? 'Monterrey, Nuevo León' : 'México'
