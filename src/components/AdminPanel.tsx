@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Plus, Edit3, Trash2, Search, Filter, Save, X, Camera } from 'lucide-react';
+import { ArrowLeft, Plus, Edit3, Trash2, Search, Filter, Save, X, Camera, Building2, Users, Calendar, Heart, MapPin, Phone, Mail } from 'lucide-react';
 import { LoginForm } from './LoginForm';
 
 interface Shelter {
