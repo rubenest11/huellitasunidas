@@ -782,14 +782,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
             Adopciones
           </button>
           <button
-            onClick={() => setActiveTab('shelters')}
+            onClick={() => setActiveTab('shelter')}
             className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
               activeTab === 'shelters'
                 ? 'bg-green-500 text-white shadow-lg'
-                : 'text-gray-600 hover:text-green-500'
+              activeTab === 'shelter' ? 'bg-red-500 text-white' : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
-            Refugios
+            Refugio
           </button>
         </div>
         {/* Search and Filters */}
@@ -1179,7 +1179,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
         {filteredShelters.length === 0 && (
           <div className="text-center py-12">
             <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 text-lg">No se encontraron refugios</p>
+        {activeTab === 'shelter' && (
+          <ShelterProfileEditor 
+            currentShelter={currentShelter}
+            onUpdateShelter={handleUpdateShelterProfile}
+          />
+        )}
+        {activeTab === 'shelters' && (
           </div>
         )}
       </div>
