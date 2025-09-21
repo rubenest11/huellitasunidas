@@ -104,26 +104,6 @@ const shelters = [
   },
   {
     id: 6,
-    name: "Segundo Hogar Querétaro",
-    location: "Querétaro, Querétaro",
-    description: "Refugio sustentable con programas de voluntariado y educación comunitaria.",
-    image: "https://images.pexels.com/photos/6816860/pexels-photo-6816860.jpeg?auto=compress&cs=tinysrgb&w=800",
-    dogsRescued: 378,
-    dogsAdopted: 289,
-    activeCampaigns: 3,
-    totalRaised: 21450,
-    established: "2020",
-    contact: {
-      phone: "+52 442 555 7890",
-      email: "contacto@segundohogar.org",
-      website: "www.segundohogar.org"
-    },
-    services: ["Educación Comunitaria", "Voluntariado", "Adopciones", "Sustentabilidad"],
-    capacity: 50,
-    currentDogs: 28
-  },
-  {
-    id: 7,
     name: "Refugio Lomitos Felices",
     location: "Puebla, Puebla",
     description: "Refugio especializado en perros pequeños y medianos con programas de rehabilitación conductual.",
