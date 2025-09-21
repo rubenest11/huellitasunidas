@@ -279,13 +279,54 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Características (separadas por comas)</label>
-                  <input
-                    type="text"
-                    value={formData.traits || ''}
-                    onChange={(e) => setFormData({...formData, traits: e.target.value})}
-                    placeholder="ej: Cariñoso, Juguetón, Bueno con niños"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {[
+                        'Cariñoso', 'Juguetón', 'Tranquilo', 'Activo', 'Obediente',
+                        'Sociable', 'Protector', 'Inteligente', 'Leal', 'Amigable',
+                        'Bueno con niños', 'Bueno con otros perros', 'Bueno con gatos',
+                        'Entrenado', 'Guardián', 'Tímido', 'Valiente', 'Dulce'
+                      ].map((trait) => {
+                        const selectedTraits = Array.isArray(formData.traits) 
+                          ? formData.traits 
+                          : (formData.traits || '').split(',').map(t => t.trim()).filter(t => t);
+                        const isSelected = selectedTraits.includes(trait);
+                        
+                        return (
+                          <button
+                            key={trait}
+                            type="button"
+                            onClick={() => {
+                              const currentTraits = Array.isArray(formData.traits) 
+                                ? formData.traits 
+                                : (formData.traits || '').split(',').map(t => t.trim()).filter(t => t);
+                              
+                              let newTraits;
+                              if (isSelected) {
+                                newTraits = currentTraits.filter(t => t !== trait);
+                              } else {
+                                newTraits = [...currentTraits, trait];
+                              }
+                              
+                              setFormData({...formData, traits: newTraits});
+                            }}
+                            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                              isSelected
+                                ? 'bg-green-500 text-white shadow-md transform scale-105'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
+                            }`}
+                          >
+                            {trait}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Seleccionadas: {Array.isArray(formData.traits) 
+                        ? formData.traits.length 
+                        : (formData.traits || '').split(',').filter(t => t.trim()).length} características
+                    </div>
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
