@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ArrowLeft, Plus, Edit3, Trash2, Search, Filter, Save, X, Camera, Building2, Users, Calendar, Heart, MapPin, Phone, Mail } from 'lucide-react';
 import { LoginForm } from './LoginForm';
 
@@ -80,51 +80,29 @@ const mockDogs = [
   { id: 3, name: "Luna", age: "1 año", breed: "Pastor Alemán Mix", status: "adopted", shelter: "Hogar Canino" },
 ];
 
-export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, setShelterData }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentShelter, setCurrentShelter] = useState<Shelter | null>(null);
-  const [showLogin, setShowLogin] = useState(true);
-  const [activeTab, setActiveTab] = useState<'donations' | 'adoptions' | 'shelters'>('donations');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [editingItem, setEditingItem] = useState<any>(null);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [allShelters, setAllShelters] = useState<any[]>([]);
-  const [shelterProfile, setShelterProfile] = useState<any>(null);
+// Componente para editar perfil del refugio
+const ShelterProfileEditor: React.FC<{
+  currentShelter: any;
+  onUpdateShelter: (profile: any) => void;
+}> = ({ currentShelter, onUpdateShelter }) => {
+  const [profile, setProfile] = useState<any>(null);
+  const [editing, setEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Cargar datos del refugio actual
   useEffect(() => {
-    if (currentShelter && currentShelter.id !== 'super-admin') {
-      // Cargar datos específicos del refugio
-      const currentData = shelterData[currentShelter.id as keyof typeof shelterData];
-      if (!currentData) {
-        // Inicializar datos vacíos si no existen
-        const newData = { ...shelterData };
-        newData[currentShelter.id as keyof typeof newData] = {
-          donations: [],
-          dogs: []
-        };
-        setShelterData(newData);
-      }
-    }
+    loadProfile();
   }, [currentShelter]);
 
-  // Cargar perfil del refugio
-  useEffect(() => {
-    if (currentShelter && currentShelter.id !== 'super-admin') {
-      loadShelterProfile();
-    }
-  }, [currentShelter]);
-
-  const loadShelterProfile = () => {
+  const loadProfile = () => {
     try {
       const savedShelters = localStorage.getItem('huellitasUnidas_shelters');
       if (savedShelters) {
         const shelters = JSON.parse(savedShelters);
-        const profile = shelters[currentShelter.id];
-        if (profile) {
-          setShelterProfile(profile);
+        const shelterProfile = shelters[currentShelter.id];
+        if (shelterProfile) {
+          setProfile(shelterProfile);
         } else {
-          // Crear perfil básico si no existe
+          // Crear perfil básico
           const basicProfile = {
             id: currentShelter.id,
             shelterID: currentShelter.shelterID || generateShelterID(),
@@ -135,91 +113,430 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
             description: 'Refugio dedicado al rescate y cuidado de perritos necesitados.',
             established: '2020',
             capacity: 50,
+            currentDogs: 0,
+            dogsRescued: 0,
+            dogsAdopted: 0,
+            activeCampaigns: 0,
+            totalRaised: 0,
             services: ['Rescate', 'Rehabilitación', 'Adopciones', 'Esterilización'],
             website: 'www.refugio.org',
+            image: 'https://images.pexels.com/photos/4498185/pexels-photo-4498185.jpeg?auto=compress&cs=tinysrgb&w=800',
             registrationDate: new Date().toLocaleDateString('es-ES', {
               year: 'numeric',
               month: 'long',
               day: 'numeric'
             })
           };
-          setShelterProfile(basicProfile);
-          // Guardar perfil básico
-          shelters[currentShelter.id] = basicProfile;
-          localStorage.setItem('huellitasUnidas_shelters', JSON.stringify(shelters));
+          setProfile(basicProfile);
         }
       }
     } catch (error) {
-      console.error('Error loading shelter profile:', error);
+      console.error('Error loading profile:', error);
     }
   };
 
-  const handleUpdateShelterProfile = (updatedProfile: any) => {
+  const handleSave = async () => {
+    if (!profile) return;
+    
+    setLoading(true);
     try {
-      // Actualizar estado local
-      setShelterProfile(updatedProfile);
+      // Simular delay de guardado
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Guardar en localStorage
-      const savedShelters = JSON.parse(localStorage.getItem('huellitasUnidas_shelters') || '{}');
-      savedShelters[currentShelter.id] = updatedProfile;
-      localStorage.setItem('huellitasUnidas_shelters', JSON.stringify(savedShelters));
-      
-      // Recargar datos para Super Admin
-      loadAllShelters();
-      
-      console.log('Perfil del refugio actualizado:', updatedProfile);
+      onUpdateShelter(profile);
+      setEditing(false);
     } catch (error) {
-      console.error('Error updating shelter profile:', error);
+      console.error('Error saving profile:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const loadAllShelters = () => {
-    // Refugios predeterminados (excluyendo super admin)
-    const defaultShelters = [
-      {
-        id: 'refugio-san-angel',
-        shelterID: 'RSA01',
-        name: 'Refugio San Ángel',
-        location: 'Ciudad de México',
-        email: 'contacto@refugiosanangel.org',
-        phone: '+52 55 1234 5678',
-        registrationDate: '15 de marzo, 2023',
-        createdAt: '2023-03-15T00:00:00.000Z'
-      },
-      {
-        id: 'patitas-felices',
-        shelterID: 'PF002',
-        name: 'Patitas Felices',
-        location: 'Guadalajara, Jalisco',
-        email: 'adopciones@patitasfelices.org',
-        phone: '+52 33 9876 5432',
-        registrationDate: '22 de abril, 2023',
-        createdAt: '2023-04-22T00:00:00.000Z'
-      },
-      {
-        id: 'hogar-canino',
-        shelterID: 'HC003',
-        name: 'Hogar Canino',
-        location: 'Monterrey, Nuevo León',
-        email: 'info@hogarcanino.org',
-        phone: '+52 81 5555 4444',
-        registrationDate: '10 de mayo, 2023',
-        createdAt: '2023-05-10T00:00:00.000Z'
-      }
-    ];
-
-    // Refugios registrados dinámicamente
-    try {
-      const savedShelters = localStorage.getItem('huellitasUnidas_shelters');
-      const dynamicShelters = savedShelters ? Object.values(JSON.parse(savedShelters)) : [];
-      
-      const allShelters = [...defaultShelters, ...dynamicShelters];
-      setAllShelters(allShelters);
-    } catch (error) {
-      console.error('Error loading shelters:', error);
-      setAllShelters(defaultShelters);
-    }
+  const handleInputChange = (field: string, value: any) => {
+    setProfile((prev: any) => ({
+      ...prev,
+      [field]: value
+    }));
   };
+
+  const handleServicesChange = (services: string) => {
+    const serviceArray = services.split(',').map(s => s.trim()).filter(s => s);
+    setProfile((prev: any) => ({
+      ...prev,
+      services: serviceArray
+    }));
+  };
+
+  if (!profile) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando perfil del refugio...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Perfil del Refugio</h2>
+          <p className="text-gray-600">Administra la información pública de tu refugio</p>
+        </div>
+        <div className="flex gap-3">
+          {editing ? (
+            <>
+              <button
+                onClick={() => {
+                  setEditing(false);
+                  loadProfile(); // Recargar datos originales
+                }}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={loading}
+                className={`px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
+                  loading 
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-blue-500 text-white hover:bg-blue-600'
+                }`}
+              >
+                {loading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Guardando...
+                  </>
+                ) : (
+                  <>
+                    <Check className="w-4 h-4" />
+                    Guardar Cambios
+                  </>
+                )}
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setEditing(true)}
+              className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+            >
+              <Edit className="w-4 h-4" />
+              Editar Perfil
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Información Básica */}
+      <div className="bg-white rounded-2xl shadow-lg p-6">
+        <h3 className="text-xl font-semibold text-gray-800 mb-6">Información Básica</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Nombre del Refugio
+            </label>
+            {editing ? (
+              <input
+                type="text"
+                value={profile.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            ) : (
+              <p className="text-gray-800 font-medium">{profile.name}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              ID del Refugio
+            </label>
+            <p className="text-gray-800 font-mono bg-gray-100 px-3 py-2 rounded-lg">
+              {profile.shelterID}
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Ubicación
+            </label>
+            {editing ? (
+              <input
+                type="text"
+                value={profile.location}
+                onChange={(e) => handleInputChange('location', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            ) : (
+              <p className="text-gray-800">{profile.location}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Año de Fundación
+            </label>
+            {editing ? (
+              <input
+                type="text"
+                value={profile.established}
+                onChange={(e) => handleInputChange('established', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            ) : (
+              <p className="text-gray-800">{profile.established}</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Información de Contacto */}
+      <div className="bg-white rounded-2xl shadow-lg p-6">
+        <h3 className="text-xl font-semibold text-gray-800 mb-6">Información de Contacto</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Correo Electrónico
+            </label>
+            {editing ? (
+              <input
+                type="email"
+                value={profile.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            ) : (
+              <p className="text-gray-800">{profile.email}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Teléfono
+            </label>
+            {editing ? (
+              <input
+                type="tel"
+                value={profile.phone}
+                onChange={(e) => handleInputChange('phone', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            ) : (
+              <p className="text-gray-800">{profile.phone}</p>
+            )}
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Sitio Web
+            </label>
+            {editing ? (
+              <input
+                type="url"
+                value={profile.website}
+                onChange={(e) => handleInputChange('website', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="www.turefugio.org"
+              />
+            ) : (
+              <p className="text-gray-800">{profile.website}</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Descripción y Servicios */}
+      <div className="bg-white rounded-2xl shadow-lg p-6">
+        <h3 className="text-xl font-semibold text-gray-800 mb-6">Descripción y Servicios</h3>
+        <div className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Descripción del Refugio
+            </label>
+            {editing ? (
+              <textarea
+                value={profile.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                rows={4}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                placeholder="Describe tu refugio, su misión y valores..."
+              />
+            ) : (
+              <p className="text-gray-800 leading-relaxed">{profile.description}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Servicios Ofrecidos
+            </label>
+            {editing ? (
+              <input
+                type="text"
+                value={profile.services?.join(', ') || ''}
+                onChange={(e) => handleServicesChange(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Rescate, Rehabilitación, Adopciones, Esterilización"
+              />
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {profile.services?.map((service: string, index: number) => (
+                  <span 
+                    key={index}
+                    className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium"
+                  >
+                    {service}
+                  </span>
+                ))}
+              </div>
+            )}
+            {editing && (
+              <p className="text-sm text-gray-500 mt-1">
+                Separa los servicios con comas
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Capacidad y Estadísticas */}
+      <div className="bg-white rounded-2xl shadow-lg p-6">
+        <h3 className="text-xl font-semibold text-gray-800 mb-6">Capacidad y Estadísticas</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Capacidad Total
+            </label>
+            {editing ? (
+              <input
+                type="number"
+                value={profile.capacity}
+                onChange={(e) => handleInputChange('capacity', parseInt(e.target.value) || 0)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            ) : (
+              <p className="text-2xl font-bold text-blue-600">{profile.capacity}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Perritos Actuales
+            </label>
+            {editing ? (
+              <input
+                type="number"
+                value={profile.currentDogs || 0}
+                onChange={(e) => handleInputChange('currentDogs', parseInt(e.target.value) || 0)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            ) : (
+              <p className="text-2xl font-bold text-green-600">{profile.currentDogs || 0}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Total Rescatados
+            </label>
+            {editing ? (
+              <input
+                type="number"
+                value={profile.dogsRescued || 0}
+                onChange={(e) => handleInputChange('dogsRescued', parseInt(e.target.value) || 0)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            ) : (
+              <p className="text-2xl font-bold text-purple-600">{profile.dogsRescued || 0}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Total Adoptados
+            </label>
+            {editing ? (
+              <input
+                type="number"
+                value={profile.dogsAdopted || 0}
+                onChange={(e) => handleInputChange('dogsAdopted', parseInt(e.target.value) || 0)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            ) : (
+              <p className="text-2xl font-bold text-orange-600">{profile.dogsAdopted || 0}</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Imagen del Refugio */}
+      <div className="bg-white rounded-2xl shadow-lg p-6">
+        <h3 className="text-xl font-semibold text-gray-800 mb-6">Imagen del Refugio</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              URL de la Imagen Principal
+            </label>
+            {editing ? (
+              <input
+                type="url"
+                value={profile.image}
+                onChange={(e) => handleInputChange('image', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="https://ejemplo.com/imagen.jpg"
+              />
+            ) : (
+              <p className="text-gray-800 break-all">{profile.image}</p>
+            )}
+          </div>
+          
+          {profile.image && (
+            <div className="mt-4">
+              <p className="text-sm font-medium text-gray-700 mb-2">Vista Previa:</p>
+              <img 
+                src={profile.image} 
+                alt="Vista previa del refugio"
+                className="w-full max-w-md h-48 object-cover rounded-lg border border-gray-200"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/4498185/pexels-photo-4498185.jpeg?auto=compress&cs=tinysrgb&w=800';
+                }}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Información de Registro */}
+      <div className="bg-gray-50 rounded-2xl p-6">
+        <h3 className="text-xl font-semibold text-gray-800 mb-4">Información de Registro</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div>
+            <span className="font-medium text-gray-700">Fecha de Registro:</span>
+            <p className="text-gray-600">{profile.registrationDate}</p>
+          </div>
+          <div>
+            <span className="font-medium text-gray-700">ID del Sistema:</span>
+            <p className="text-gray-600 font-mono">{profile.id}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, setShelterData }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentShelter, setCurrentShelter] = useState<Shelter | null>(null);
+  const [showLogin, setShowLogin] = useState(true);
+  const [activeTab, setActiveTab] = useState<'donations' | 'adoptions' | 'shelters'>('donations');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [editingItem, setEditingItem] = useState<any>(null);
+  const [showAddForm, setShowAddForm] = useState(false);
 
   const handleLogin = (shelter: Shelter) => {
     setCurrentShelter(shelter);
@@ -1108,6 +1425,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
             </div>
           )}
 
+          {activeTab === 'shelter' && (
+            <ShelterProfileEditor 
+              currentShelter={currentShelter}
+              onUpdateShelter={handleUpdateShelterProfile}
+            />
+          )}
           {activeTab === 'shelters' && (
             <>
               {currentShelter.id === 'super-admin' ? (
@@ -1148,6 +1471,54 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
     useEffect(() => {
       loadAllShelters();
     }, []);
+
+    const loadAllShelters = () => {
+      // Refugios predeterminados (excluyendo super admin)
+      const defaultShelters = [
+        {
+          id: 'refugio-san-angel',
+          shelterID: 'RSA01',
+          name: 'Refugio San Ángel',
+          location: 'Ciudad de México',
+          email: 'contacto@refugiosanangel.org',
+          phone: '+52 55 1234 5678',
+          registrationDate: '15 de marzo, 2023',
+          createdAt: '2023-03-15T00:00:00.000Z'
+        },
+        {
+          id: 'patitas-felices',
+          shelterID: 'PF002',
+          name: 'Patitas Felices',
+          location: 'Guadalajara, Jalisco',
+          email: 'adopciones@patitasfelices.org',
+          phone: '+52 33 9876 5432',
+          registrationDate: '22 de abril, 2023',
+          createdAt: '2023-04-22T00:00:00.000Z'
+        },
+        {
+          id: 'hogar-canino',
+          shelterID: 'HC003',
+          name: 'Hogar Canino',
+          location: 'Monterrey, Nuevo León',
+          email: 'info@hogarcanino.org',
+          phone: '+52 81 5555 4444',
+          registrationDate: '10 de mayo, 2023',
+          createdAt: '2023-05-10T00:00:00.000Z'
+        }
+      ];
+
+      // Refugios registrados dinámicamente
+      try {
+        const savedShelters = localStorage.getItem('huellitasUnidas_shelters');
+        const dynamicShelters = savedShelters ? Object.values(JSON.parse(savedShelters)) : [];
+        
+        const allShelters = [...defaultShelters, ...dynamicShelters];
+        setAllRegisteredShelters(allShelters);
+      } catch (error) {
+        console.error('Error loading shelters:', error);
+        setAllRegisteredShelters(defaultShelters);
+      }
+    };
 
     const filteredShelters = allRegisteredShelters.filter(shelter =>
       shelter.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -1262,6 +1633,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
           <div className="text-center py-12">
             <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <p className="text-gray-500 text-lg">No se encontraron refugios</p>
+            <p className="text-gray-400">Intenta con otros términos de búsqueda</p>
           </div>
         )}
       </div>
