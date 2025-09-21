@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Plus, Edit3, Trash2, Search, Filter, Save, X, Camera, Building2, Users, Calendar, Heart, MapPin, Phone, Mail } from 'lucide-react';
+import { ArrowLeft, Plus, Edit, Save, X, Users, Heart, DollarSign, Home, Building2, BarChart3, Calendar, MapPin, Phone, Mail, Globe, Camera, Upload, Check, AlertCircle, Trash2 } from 'lucide-react';
 import { LoginForm } from './LoginForm';
 
 interface Shelter {
@@ -1805,6 +1805,34 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
               </div>
             </div>
           )}
+        </div>
+
+        {/* Zona de Peligro - Eliminar Refugio */}
+        <div className="bg-red-50 border border-red-200 rounded-xl p-6 mt-8">
+          <h3 className="text-xl font-bold text-red-800 mb-4">⚠️ Zona de Peligro</h3>
+          <div className="bg-white rounded-lg p-4 border border-red-200">
+            <h4 className="font-semibold text-red-700 mb-2">Eliminar Refugio Permanentemente</h4>
+            <p className="text-red-600 text-sm mb-4">
+              Esta acción eliminará completamente el refugio y todos sus datos asociados:
+            </p>
+            <ul className="text-red-600 text-sm mb-4 space-y-1">
+              <li>• Todos los perritos registrados</li>
+              <li>• Todas las campañas de donación</li>
+              <li>• Información del perfil público</li>
+              <li>• Acceso al panel administrativo</li>
+              <li>• Historial y estadísticas</li>
+            </ul>
+            <p className="text-red-700 font-semibold text-sm mb-4">
+              ⚠️ Esta acción NO se puede deshacer
+            </p>
+            <button
+              onClick={() => setShowDeleteConfirmation(true)}
+              className="bg-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors flex items-center gap-2"
+            >
+              <Trash2 className="w-5 h-5" />
+              Eliminar Refugio Permanentemente
+            </button>
+          </div>
         </div>
       </div>
     );
