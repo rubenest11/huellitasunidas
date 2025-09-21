@@ -82,26 +82,6 @@ const shelters = [
     capacity: 120,
     currentDogs: 78
   },
-  {
-    id: 5,
-    name: "Amor Perruno Puebla",
-    location: "Puebla, Puebla",
-    description: "Refugio familiar que se especializa en casos de maltrato y abandono extremo.",
-    image: "https://images.pexels.com/photos/7210755/pexels-photo-7210755.jpeg?auto=compress&cs=tinysrgb&w=800",
-    dogsRescued: 543,
-    dogsAdopted: 412,
-    activeCampaigns: 4,
-    totalRaised: 29650,
-    established: "2019",
-    contact: {
-      phone: "+52 222 987 6543",
-      email: "info@amorperruno.org",
-      website: "www.amorperruno.org"
-    },
-    services: ["Rehabilitación Psicológica", "Casos de Maltrato", "Adopciones", "Terapia"],
-    capacity: 60,
-    currentDogs: 34
-  },
 ];
 
 // Función para cargar refugios desde localStorage
