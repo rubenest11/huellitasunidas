@@ -328,6 +328,123 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
                     </div>
                   </div>
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Personalidad (Niveles del 1-100)</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Energía</label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={formData.personality?.energy || 50}
+                        onChange={(e) => setFormData({
+                          ...formData, 
+                          personality: {
+                            ...formData.personality,
+                            energy: Number(e.target.value)
+                          }
+                        })}
+                        className="w-full"
+                      />
+                      <div className="text-xs text-gray-500 text-center">{formData.personality?.energy || 50}%</div>
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Amigabilidad</label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={formData.personality?.friendliness || 50}
+                        onChange={(e) => setFormData({
+                          ...formData, 
+                          personality: {
+                            ...formData.personality,
+                            friendliness: Number(e.target.value)
+                          }
+                        })}
+                        className="w-full"
+                      />
+                      <div className="text-xs text-gray-500 text-center">{formData.personality?.friendliness || 50}%</div>
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Entrenamiento</label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={formData.personality?.training || 50}
+                        onChange={(e) => setFormData({
+                          ...formData, 
+                          personality: {
+                            ...formData.personality,
+                            training: Number(e.target.value)
+                          }
+                        })}
+                        className="w-full"
+                      />
+                      <div className="text-xs text-gray-500 text-center">{formData.personality?.training || 50}%</div>
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">Independencia</label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={formData.personality?.independence || 50}
+                        onChange={(e) => setFormData({
+                          ...formData, 
+                          personality: {
+                            ...formData.personality,
+                            independence: Number(e.target.value)
+                          }
+                        })}
+                        className="w-full"
+                      />
+                      <div className="text-xs text-gray-500 text-center">{formData.personality?.independence || 50}%</div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Requisitos para Adopción</label>
+                  <div className="space-y-2">
+                    {(formData.requirements || []).map((requirement, index) => (
+                      <div key={index} className="flex gap-2">
+                        <input
+                          type="text"
+                          value={requirement}
+                          onChange={(e) => {
+                            const newRequirements = [...(formData.requirements || [])];
+                            newRequirements[index] = e.target.value;
+                            setFormData({...formData, requirements: newRequirements});
+                          }}
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="Requisito para adopción..."
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newRequirements = (formData.requirements || []).filter((_, i) => i !== index);
+                            setFormData({...formData, requirements: newRequirements});
+                          }}
+                          className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newRequirements = [...(formData.requirements || []), ''];
+                        setFormData({...formData, requirements: newRequirements});
+                      }}
+                      className="w-full px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-blue-500 hover:text-blue-500 transition-colors"
+                    >
+                      + Agregar Requisito
+                    </button>
+                  </div>
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Estado Veterinario</label>
