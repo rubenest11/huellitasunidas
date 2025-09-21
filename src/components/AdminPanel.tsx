@@ -512,7 +512,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
           weight: data.weight || '',
           description: data.description || `${data.name || 'Este perrito'} es muy especial y busca un hogar amoroso.`,
           story: data.story || '',
-          traits: data.traits ? data.traits.split(',').map(t => t.trim()) : ['Cariñoso', 'Juguetón'],
+          traits: Array.isArray(data.traits) ? data.traits : (data.traits ? data.traits.split(',').map(t => t.trim()) : ['Cariñoso', 'Juguetón']),
           vaccinated: data.vaccinated || false,
           sterilized: data.sterilized || false,
           medicalInfo: data.medicalInfo || '',
