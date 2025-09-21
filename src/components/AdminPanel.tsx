@@ -1018,17 +1018,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
     useEffect(() => {
       loadAllShelters();
     }, []);
-                </div>
-                <div className="bg-blue-50 rounded-xl p-6">
-                  <h4 className="text-lg font-semibold text-blue-800 mb-2">Perritos en Adopción</h4>
-                  <p className="text-3xl font-bold text-blue-600">{currentDogs.length}</p>
-                  <p className="text-sm text-blue-700">Esperando hogar</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
 
     const loadAllShelters = () => {
       // Refugios predeterminados (excluyendo super admin)
@@ -1039,6 +1028,32 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
           name: 'Refugio San Ángel',
           location: 'Ciudad de México',
           email: 'contacto@refugiosanangel.org',
+          phone: '+52 55 1234 5678',
+          registrationDate: '15 de marzo, 2023',
+          createdAt: '2023-03-15T00:00:00.000Z'
+        },
+        {
+          id: 'patitas-felices',
+          shelterID: 'PF002',
+          name: 'Patitas Felices',
+          location: 'Guadalajara, Jalisco',
+          email: 'adopciones@patitasfelices.org',
+          phone: '+52 33 9876 5432',
+          registrationDate: '22 de abril, 2023',
+          createdAt: '2023-04-22T00:00:00.000Z'
+        },
+        {
+          id: 'hogar-canino',
+          shelterID: 'HC003',
+          name: 'Hogar Canino',
+          location: 'Monterrey, Nuevo León',
+          email: 'info@hogarcanino.org',
+          phone: '+52 81 5555 4444',
+          registrationDate: '10 de mayo, 2023',
+          createdAt: '2023-05-10T00:00:00.000Z'
+        }
+      ];
+
       // Refugios registrados dinámicamente
       try {
         const savedShelters = localStorage.getItem('huellitasUnidas_shelters');
@@ -1051,13 +1066,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
         setAllRegisteredShelters(defaultShelters);
       }
     };
-          phone: '+52 55 1234 5678',
+
     const filteredShelters = allRegisteredShelters.filter(shelter =>
       shelter.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       shelter.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
       shelter.shelterID.toLowerCase().includes(searchTerm.toLowerCase())
     );
-          registrationDate: '15 de marzo, 2023',
+
     const totalShelters = allRegisteredShelters.length;
     const thisWeekShelters = allRegisteredShelters.filter(shelter => {
       const registrationDate = new Date(shelter.createdAt);
@@ -1065,14 +1080,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
       return registrationDate >= oneWeekAgo;
     }).length;
-          createdAt: '2023-03-15T00:00:00.000Z'
+
     return (
       <div className="p-6">
         <div className="bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-2xl p-8 mb-8">
           <h3 className="text-3xl font-bold mb-2">🔧 Panel Super Administrador</h3>
           <p className="text-lg opacity-90">Gestión completa de refugios registrados</p>
         </div>
-        },
+
         {/* Estadísticas */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-blue-50 rounded-xl p-6">
@@ -1091,7 +1106,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
             <p className="text-sm text-purple-700">Nuevos registros</p>
           </div>
         </div>
-        {
+
         {/* Búsqueda */}
         <div className="mb-6">
           <div className="relative">
@@ -1105,7 +1120,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
             />
           </div>
         </div>
-          id: 'patitas-felices',
+
         {/* Tabla de Refugios */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           <div className="overflow-x-auto">
@@ -1160,7 +1175,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
             </table>
           </div>
         </div>
-          shelterID: 'PF002',
+
         {filteredShelters.length === 0 && (
           <div className="text-center py-12">
             <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -1170,7 +1185,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
       </div>
     );
   };
-          name: 'Patitas Felices',
+
   // Componente Perfil del Refugio
   const ShelterProfilePanel = ({ shelter, currentShelterColor, currentDonations, currentDogs }: any) => {
     const [editingProfile, setEditingProfile] = useState(false);
@@ -1180,14 +1195,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
       email: shelter.email || 'contacto@refugio.org',
       phone: shelter.phone || '+52 55 0000 0000'
     });
-          location: 'Guadalajara, Jalisco',
+
     const handleSaveProfile = () => {
       // Aquí guardarías los cambios del perfil
       console.log('Guardando perfil:', profileData);
       setEditingProfile(false);
       // TODO: Implementar guardado real
     };
-          email: 'adopciones@patitasfelices.org',
+
     return (
       <div className="p-6">
         <div className={`bg-gradient-to-r ${currentShelterColor} text-white rounded-2xl p-8 mb-6`}>
@@ -1203,7 +1218,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
             </div>
           </div>
         </div>
-          phone: '+52 33 9876 5432',
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-orange-50 rounded-xl p-6">
             <h4 className="text-lg font-semibold text-orange-800 mb-2">Campañas de Donación</h4>
@@ -1216,7 +1231,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
             <p className="text-sm text-blue-700">Esperando hogar</p>
           </div>
         </div>
-          registrationDate: '22 de abril, 2023',
+
         {/* Información de Registro */}
         <div className="bg-white rounded-2xl shadow-lg p-6">
           <div className="flex justify-between items-center mb-6">
@@ -1229,7 +1244,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
               {editingProfile ? 'Cancelar' : 'Editar'}
             </button>
           </div>
-          createdAt: '2023-04-22T00:00:00.000Z'
+
           {editingProfile ? (
             <div className="space-y-4">
               <div>
@@ -1285,15 +1300,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
                     <div className="text-sm text-gray-500">Nombre</div>
                     <div className="font-medium text-gray-800">{shelter.name}</div>
                   </div>
-        },
+                </div>
                 <div className="flex items-center gap-3">
                   <MapPin className="w-5 h-5 text-gray-400" />
                   <div>
                     <div className="text-sm text-gray-500">Ubicación</div>
                     <div className="font-medium text-gray-800">{shelter.location}</div>
                   </div>
-          location: 'Monterrey, Nuevo León',
-          email: 'info@hogarcanino.org',
+                </div>
+              </div>
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-gray-400" />
@@ -1308,3 +1323,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
                     <div className="text-sm text-gray-500">Correo</div>
                     <div className="font-medium text-gray-800">{shelter.email || 'contacto@refugio.org'}</div>
                   </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+};
