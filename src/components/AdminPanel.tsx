@@ -221,6 +221,107 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
                     />
                   </div>
                 </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Tamaño</label>
+                    <select
+                      value={formData.size || 'Mediano'}
+                      onChange={(e) => setFormData({...formData, size: e.target.value})}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="Pequeño">Pequeño</option>
+                      <option value="Mediano">Mediano</option>
+                      <option value="Grande">Grande</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Género</label>
+                    <select
+                      value={formData.gender || 'Hembra'}
+                      onChange={(e) => setFormData({...formData, gender: e.target.value})}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="Hembra">Hembra</option>
+                      <option value="Macho">Macho</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Peso</label>
+                    <input
+                      type="text"
+                      value={formData.weight || ''}
+                      onChange={(e) => setFormData({...formData, weight: e.target.value})}
+                      placeholder="ej: 25 kg"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                  <textarea
+                    value={formData.description || ''}
+                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none"
+                    rows={3}
+                    placeholder="Descripción general del perrito..."
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Historia Completa</label>
+                  <textarea
+                    value={formData.story || ''}
+                    onChange={(e) => setFormData({...formData, story: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none"
+                    rows={6}
+                    placeholder="Cuenta la historia completa del perrito..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Características (separadas por comas)</label>
+                  <input
+                    type="text"
+                    value={formData.traits || ''}
+                    onChange={(e) => setFormData({...formData, traits: e.target.value})}
+                    placeholder="ej: Cariñoso, Juguetón, Bueno con niños"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Estado Veterinario</label>
+                    <div className="space-y-2">
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={formData.vaccinated || false}
+                          onChange={(e) => setFormData({...formData, vaccinated: e.target.checked})}
+                          className="mr-2"
+                        />
+                        <span className="text-sm">Vacunado</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={formData.sterilized || false}
+                          onChange={(e) => setFormData({...formData, sterilized: e.target.checked})}
+                          className="mr-2"
+                        />
+                        <span className="text-sm">Esterilizado</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Información Médica</label>
+                    <textarea
+                      value={formData.medicalInfo || ''}
+                      onChange={(e) => setFormData({...formData, medicalInfo: e.target.value})}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none"
+                      rows={3}
+                      placeholder="Información médica adicional..."
+                    />
+                  </div>
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Estado</label>
                   <select
@@ -365,6 +466,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
           name: data.name || 'Nuevo Perrito',
           age: data.age || '1 año',
           breed: data.breed || 'Mestizo',
+          size: data.size || 'Mediano',
+          gender: data.gender || 'Hembra',
+          weight: data.weight || '',
+          description: data.description || `${data.name || 'Este perrito'} es muy especial y busca un hogar amoroso.`,
+          story: data.story || '',
+          traits: data.traits ? data.traits.split(',').map(t => t.trim()) : ['Cariñoso', 'Juguetón'],
+          vaccinated: data.vaccinated || false,
+          sterilized: data.sterilized || false,
+          medicalInfo: data.medicalInfo || '',
           status: data.status || 'available',
           images: data.images || []
         };
@@ -614,11 +724,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
                               )}
                             </div>
                           )}
-                          <div className="font-medium text-gray-800">{dog.name}</div>
+                          <div>
+                            <div className="font-medium text-gray-800">{dog.name}</div>
+                            <div className="text-xs text-gray-500">{dog.size} • {dog.gender}</div>
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">{dog.age}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{dog.breed}</td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-gray-600">{dog.breed}</div>
+                        {dog.weight && <div className="text-xs text-gray-500">{dog.weight}</div>}
+                      </td>
                       <td className="px-6 py-4">
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                           dog.status === 'available' ? 'bg-green-100 text-green-800' :
@@ -628,6 +744,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
                           {dog.status === 'available' ? 'Disponible' : 
                            dog.status === 'adopted' ? 'Adoptado' : dog.status}
                         </span>
+                        <div className="flex gap-1 mt-1">
+                          {dog.vaccinated && <span className="text-xs bg-green-100 text-green-600 px-1 rounded">💉</span>}
+                          {dog.sterilized && <span className="text-xs bg-blue-100 text-blue-600 px-1 rounded">✂️</span>}
+                        </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">{currentShelter.name}</td>
                       <td className="px-6 py-4">

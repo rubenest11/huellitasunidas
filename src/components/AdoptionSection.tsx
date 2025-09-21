@@ -14,13 +14,13 @@ export const AdoptionSection: React.FC<AdoptionSectionProps> = ({ onDogSelect, o
     name: dog.name,
     age: dog.age,
     breed: dog.breed,
-    size: "Mediano", // Valor por defecto
-    gender: "Hembra", // Valor por defecto
-    description: `${dog.name} es un perrito muy especial que busca un hogar amoroso.`,
+    size: dog.size || "Mediano",
+    gender: dog.gender || "Hembra", 
+    description: dog.description || `${dog.name} es un perrito muy especial que busca un hogar amoroso.`,
     image: dog.images && dog.images.length > 0 ? dog.images[0] : "https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=800",
-    traits: ["Cariñoso", "Juguetón", "Leal"],
-    vaccinated: true,
-    sterilized: dog.status !== "available" ? true : false,
+    traits: dog.traits || ["Cariñoso", "Juguetón", "Leal"],
+    vaccinated: dog.vaccinated || false,
+    sterilized: dog.sterilized || false,
     location: dog.shelter === 'Refugio San Ángel' ? 'Ciudad de México' :
               dog.shelter === 'Patitas Felices' ? 'Guadalajara, Jalisco' :
               dog.shelter === 'Hogar Canino' ? 'Monterrey, Nuevo León' : 'México'
