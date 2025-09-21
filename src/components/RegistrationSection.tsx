@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import { Check, Star, Shield, Zap, Users, BarChart3, Heart, Phone, Mail, MapPin } from 'lucide-react';
+import { ShelterRegistrationForm } from './ShelterRegistrationForm';
 
-export const RegistrationSection: React.FC = () => {
+interface RegistrationSectionProps {
+  onShelterRegistration: (shelterData: any) => void;
+}
+
+export const RegistrationSection: React.FC<RegistrationSectionProps> = ({ onShelterRegistration }) => {
   const [selectedPlan, setSelectedPlan] = useState<'trial' | 'premium' | null>(null);
   const [showContactForm, setShowContactForm] = useState(false);
+  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
 
   const plans = [
     {
@@ -216,7 +222,13 @@ export const RegistrationSection: React.FC = () => {
               )}
 
               <button
-                onClick={() => setShowContactForm(true)}
+                onClick={() => {
+                  if (plan.id === 'trial') {
+                    setShowRegistrationForm(true);
+                  } else {
+                    setShowContactForm(true);
+                  }
+                }}
                 className={`w-full bg-gradient-to-r ${plan.color} text-white font-semibold py-4 px-6 rounded-xl hover:opacity-90 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2`}
               >
                 <Zap className="w-5 h-5" />
@@ -311,6 +323,15 @@ export const RegistrationSection: React.FC = () => {
       </div>
 
       {showContactForm && <ContactForm />}
+      {showRegistrationForm && (
+        <ShelterRegistrationForm
+          onRegistrationSuccess={(shelterData) => {
+            setShowRegistrationForm(false);
+            onShelterRegistration(shelterData);
+          }}
+          onCancel={() => setShowRegistrationForm(false)}
+        />
+      )}
     </section>
   );
 };
