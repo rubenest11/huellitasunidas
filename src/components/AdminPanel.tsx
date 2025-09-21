@@ -316,59 +316,66 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
   const handleSave = (data: any) => {
     if (!currentShelter) return;
     
-    // Actualizar los datos en el estado
-    setShelterData((prevData: any) => {
-      const newData = { ...prevData };
-      const shelterKey = currentShelter.id as keyof typeof newData;
-      
-      if (activeTab === 'donations') {
-        if (editingItem) {
-          // Editar donación existente
-          newData[shelterKey].donations = newData[shelterKey].donations.map((donation: any) =>
-            donation.id === editingItem.id ? { ...donation, ...data } : donation
-          );
-        } else {
-          // Agregar nueva donación
-          const newId = Math.max(...newData[shelterKey].donations.map((d: any) => d.id), 0) + 1;
-          const newDonation = {
-            ...data,
-            id: newId,
-            // Asegurar que tenga todos los campos necesarios para la vista pública
-            title: data.title || 'Nueva Campaña',
-            subtitle: data.subtitle || 'Descripción del caso',
-            story: data.story || 'Historia del caso',
-            raised: data.raised || 0,
-            goal: data.goal || 1000,
-            status: data.status || 'active',
-            images: data.images || []
-          };
-          newData[shelterKey].donations.push(newDonation);
-        }
-      } else if (activeTab === 'adoptions') {
-        if (editingItem) {
-          // Editar adopción existente
-          newData[shelterKey].dogs = newData[shelterKey].dogs.map((dog: any) =>
-            dog.id === editingItem.id ? { ...dog, ...data } : dog
-          );
-        } else {
-          // Agregar nueva adopción
-          const newId = Math.max(...newData[shelterKey].dogs.map((d: any) => d.id), 0) + 1;
-          const newDog = {
-            ...data,
-            id: newId,
-            // Asegurar que tenga todos los campos necesarios para la vista pública
-            name: data.name || 'Nuevo Perrito',
-            age: data.age || '1 año',
-            breed: data.breed || 'Mestizo',
-            status: data.status || 'available',
-            images: data.images || []
-          };
-          newData[shelterKey].dogs.push(newDog);
-        }
+    // Actualizar los datos en el estado y guardar inmediatamente
+    const newData = { ...shelterData };
+    const shelterKey = currentShelter.id as keyof typeof newData;
+    
+    if (activeTab === 'donations') {
+      if (editingItem) {
+        // Editar donación existente
+        newData[shelterKey].donations = newData[shelterKey].donations.map((donation: any) =>
+          donation.id === editingItem.id ? { ...donation, ...data } : donation
+        );
+      } else {
+        // Agregar nueva donación
+        const newId = Math.max(...newData[shelterKey].donations.map((d: any) => d.id), 0) + 1;
+        const newDonation = {
+          ...data,
+          id: newId,
+          // Asegurar que tenga todos los campos necesarios para la vista pública
+          title: data.title || 'Nueva Campaña',
+          subtitle: data.subtitle || 'Descripción del caso',
+          story: data.story || 'Historia del caso',
+          raised: data.raised || 0,
+          goal: data.goal || 1000,
+          status: data.status || 'active',
+          images: data.images || []
+        };
+        newData[shelterKey].donations.push(newDonation);
       }
-      
-      return newData;
-    });
+    } else if (activeTab === 'adoptions') {
+      if (editingItem) {
+        // Editar adopción existente
+        newData[shelterKey].dogs = newData[shelterKey].dogs.map((dog: any) =>
+          dog.id === editingItem.id ? { ...dog, ...data } : dog
+        );
+      } else {
+        // Agregar nueva adopción
+        const newId = Math.max(...newData[shelterKey].dogs.map((d: any) => d.id), 0) + 1;
+        const newDog = {
+          ...data,
+          id: newId,
+          // Asegurar que tenga todos los campos necesarios para la vista pública
+          name: data.name || 'Nuevo Perrito',
+          age: data.age || '1 año',
+          breed: data.breed || 'Mestizo',
+          status: data.status || 'available',
+          images: data.images || []
+        };
+        newData[shelterKey].dogs.push(newDog);
+      }
+    }
+    
+    // Actualizar el estado y guardar en localStorage
+    setShelterData(newData);
+    
+    // Forzar guardado inmediato
+    try {
+      localStorage.setItem('huellitasUnidas_shelterData', JSON.stringify(newData));
+      console.log('Datos guardados exitosamente:', newData);
+    } catch (error) {
+      console.error('Error guardando datos:', error);
+    }
     
     setEditingItem(null);
     setShowAddForm(false);
@@ -378,18 +385,25 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
     if (confirm(`¿Estás seguro de que quieres eliminar este ${type}?`)) {
       if (!currentShelter) return;
       
-      setShelterData((prevData: any) => {
-        const newData = { ...prevData };
-        const shelterKey = currentShelter.id as keyof typeof newData;
-        
-        if (activeTab === 'donations') {
-          newData[shelterKey].donations = newData[shelterKey].donations.filter((donation: any) => donation.id !== id);
-        } else if (activeTab === 'adoptions') {
-          newData[shelterKey].dogs = newData[shelterKey].dogs.filter((dog: any) => dog.id !== id);
-        }
-        
-        return newData;
-      });
+      const newData = { ...prevData };
+      const shelterKey = currentShelter.id as keyof typeof newData;
+      
+      if (activeTab === 'donations') {
+        newData[shelterKey].donations = newData[shelterKey].donations.filter((donation: any) => donation.id !== id);
+      } else if (activeTab === 'adoptions') {
+        newData[shelterKey].dogs = newData[shelterKey].dogs.filter((dog: any) => dog.id !== id);
+      }
+      
+      // Actualizar el estado y guardar en localStorage
+      setShelterData(newData);
+      
+      // Forzar guardado inmediato
+      try {
+        localStorage.setItem('huellitasUnidas_shelterData', JSON.stringify(newData));
+        console.log('Datos eliminados y guardados exitosamente');
+      } catch (error) {
+        console.error('Error guardando datos después de eliminar:', error);
+      }
     }
   };
 
