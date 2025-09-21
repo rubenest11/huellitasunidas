@@ -1308,20 +1308,3 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
                     <div className="text-sm text-gray-500">Correo</div>
                     <div className="font-medium text-gray-800">{shelter.email || 'contacto@refugio.org'}</div>
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Calendar className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <div className="text-sm text-gray-500">Fecha de Registro</div>
-                    <div className="font-medium text-gray-800">{shelter.registrationDate || 'No disponible'}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          registrationDate: '10 de junio, 2023',
-        </div>
-      </div>
-    );
-  };
-  );
-};
