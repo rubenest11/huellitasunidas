@@ -14,25 +14,38 @@ const shelters: Shelter[] = [
     id: 'super-admin',
     name: 'Super Admin',
     code: '777777',
-    location: 'Sistema'
+    location: 'Sistema',
+    shelterID: 'ADMIN'
   },
   {
     id: 'refugio-san-angel',
     name: 'Refugio San Ángel',
     code: '248159',
-    location: 'Ciudad de México'
+    location: 'Ciudad de México',
+    shelterID: 'RSA01',
+    email: 'contacto@refugiosanangel.org',
+    phone: '+52 55 1234 5678',
+    registrationDate: '15 de marzo, 2023'
   },
   {
     id: 'patitas-felices',
     name: 'Patitas Felices',
     code: '736482',
-    location: 'Guadalajara'
+    location: 'Guadalajara',
+    shelterID: 'PF002',
+    email: 'adopciones@patitasfelices.org',
+    phone: '+52 33 9876 5432',
+    registrationDate: '22 de abril, 2023'
   },
   {
     id: 'hogar-canino',
     name: 'Hogar Canino',
     code: '591037',
-    location: 'Monterrey'
+    location: 'Monterrey',
+    shelterID: 'HC003',
+    email: 'info@hogarcanino.org',
+    phone: '+52 81 5555 1234',
+    registrationDate: '10 de junio, 2023'
   }
 ];
 
@@ -143,7 +156,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onCancel }) => {
                   <option key={shelter.id} value={shelter.id}>
                     {shelter.id === 'super-admin' ? 
                       '🔧 Super Admin - Sistema' : 
-                      `${shelter.name} - ${shelter.location}${shelter.shelterID ? ` (ID: ${shelter.shelterID})` : ''}`
+                      `${shelter.name} - ${shelter.location} (ID: ${shelter.shelterID})`
                     }
                   </option>
                 ))}
