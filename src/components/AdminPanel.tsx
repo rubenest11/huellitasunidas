@@ -85,10 +85,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
     const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files;
       if (files) {
-        const newImages = Array.from(files).map(file => URL.createObjectURL(file));
-        setFormData({
-          ...formData,
-          images: [...(formData.images || []), ...newImages]
+        Array.from(files).forEach(file => {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const base64String = event.target?.result as string;
+            setFormData(prev => ({
+              ...prev,
+              images: [...(prev.images || []), base64String]
+            }));
+          };
+          reader.readAsDataURL(file);
         });
       }
     };
