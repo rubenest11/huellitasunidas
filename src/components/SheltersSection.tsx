@@ -62,7 +62,7 @@ const shelters = [
     capacity: 80,
     currentDogs: 45
   },
-  {
+];
     id: 4,
     name: "Rescate Tijuana",
     location: "Tijuana, Baja California",
@@ -82,8 +82,8 @@ const shelters = [
     capacity: 120,
     currentDogs: 78
   },
-];
-
+  {
+    id: 5,
 // Función para cargar refugios desde localStorage
 const loadSheltersFromStorage = () => {
   try {
