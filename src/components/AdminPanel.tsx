@@ -582,7 +582,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
     if (!currentShelter) return;
     
     // Actualizar los datos en el estado y guardar inmediatamente
-    const newData = { ...shelterData };
+    const newData = JSON.parse(JSON.stringify(shelterData)); // Deep copy
     const shelterKey = currentShelter.id as keyof typeof newData;
     
     if (activeTab === 'donations') {
@@ -620,28 +620,41 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
         const newDog = {
           ...data,
           id: newId,
-          // Asegurar que tenga todos los campos necesarios para la vista pública
+          // Asegurar que tenga todos los campos necesarios
           name: data.name || 'Nuevo Perrito',
           age: data.age || '1 año',
           breed: data.breed || 'Mestizo',
           size: data.size || 'Mediano',
           gender: data.gender || 'Hembra',
           weight: data.weight || '',
+          height: data.height || '',
           description: data.description || `${data.name || 'Este perrito'} es muy especial y busca un hogar amoroso.`,
           story: data.story || '',
-          traits: Array.isArray(data.traits) ? data.traits : (data.traits ? data.traits.split(',').map(t => t.trim()) : ['Cariñoso', 'Juguetón']),
+          traits: Array.isArray(data.traits) ? data.traits : ['Cariñoso', 'Juguetón'],
           vaccinated: data.vaccinated || false,
           sterilized: data.sterilized || false,
           medicalInfo: data.medicalInfo || '',
           status: data.status || 'available',
           images: data.images || [],
+          location: currentShelter.location,
           personality: data.personality || {
-            energy: 50,
-            friendliness: 50,
-            training: 50,
-            independence: 50
+            energy: data.personality?.energy || 70,
+            friendliness: data.personality?.friendliness || 85,
+            training: data.personality?.training || 60,
+            independence: data.personality?.independence || 50
           },
-          requirements: data.requirements || []
+          requirements: Array.isArray(data.requirements) ? data.requirements.filter(r => r.trim()) : [],
+          rescueDate: new Date().toLocaleDateString('es-ES', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          }),
+          contact: {
+            name: "Coordinador de Adopciones",
+            phone: "+52 55 1234 5678",
+            email: "adopciones@huellitasunidas.org",
+            whatsapp: "+52 55 1234 5678"
+          }
         };
         newData[shelterKey].dogs.push(newDog);
       }
@@ -649,15 +662,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
     
     // Actualizar el estado y guardar en localStorage
     setShelterData(newData);
-    
-    // Forzar guardado inmediato
-    try {
-      localStorage.setItem('huellitasUnidas_shelterData', JSON.stringify(newData));
-      console.log('Datos guardados exitosamente:', newData);
-    } catch (error) {
-      console.error('Error guardando datos:', error);
-    }
-    
+    console.log('Datos guardados:', newData);
     setEditingItem(null);
     setShowAddForm(false);
   };
@@ -666,7 +671,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
     if (confirm(`¿Estás seguro de que quieres eliminar este ${type}?`)) {
       if (!currentShelter) return;
       
-      const newData = { ...prevData };
+      const newData = JSON.parse(JSON.stringify(shelterData)); // Deep copy
       const shelterKey = currentShelter.id as keyof typeof newData;
       
       if (activeTab === 'donations') {
@@ -677,14 +682,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
       
       // Actualizar el estado y guardar en localStorage
       setShelterData(newData);
-      
-      // Forzar guardado inmediato
-      try {
-        localStorage.setItem('huellitasUnidas_shelterData', JSON.stringify(newData));
-        console.log('Datos eliminados y guardados exitosamente');
-      } catch (error) {
-        console.error('Error guardando datos después de eliminar:', error);
-      }
     }
   };
 

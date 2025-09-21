@@ -102,11 +102,44 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
   const [shelterData, setShelterData] = useState(() => {
     try {
       const savedData = localStorage.getItem('huellitasUnidas_shelterData');
-      return savedData ? JSON.parse(savedData) : {};
+      console.log('DogDetail cargando datos:', savedData ? 'Datos encontrados' : 'No hay datos');
+      if (savedData && savedData !== 'undefined') {
+        const parsed = JSON.parse(savedData);
+        console.log('DogDetail datos parseados:', parsed);
+        return parsed;
+      }
+      return {};
     } catch {
+      console.error('Error cargando datos en DogDetail');
       return {};
     }
   });
+  
+  // Recargar datos cuando cambie el localStorage
+  useEffect(() => {
+    const handleStorageChange = () => {
+      try {
+        const savedData = localStorage.getItem('huellitasUnidas_shelterData');
+        if (savedData && savedData !== 'undefined') {
+          const parsed = JSON.parse(savedData);
+          console.log('DogDetail recargando datos por cambio:', parsed);
+          setShelterData(parsed);
+        }
+      } catch (error) {
+        console.error('Error recargando datos:', error);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // También verificar cambios cada segundo (para cambios en la misma pestaña)
+    const interval = setInterval(handleStorageChange, 1000);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
   
   // Scroll to top when component mounts
   useEffect(() => {
@@ -115,12 +148,15 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
   
   // Buscar el perro en los datos del refugio
   const findDogInShelterData = () => {
+    console.log('Buscando perro con ID:', dogId, 'en datos:', shelterData);
     for (const shelter of Object.values(shelterData)) {
       const foundDog = (shelter as any).dogs?.find((d: any) => d.id === dogId);
       if (foundDog) {
+        console.log('Perro encontrado:', foundDog);
         return foundDog;
       }
     }
+    console.log('Perro no encontrado en datos del refugio');
     return null;
   };
   

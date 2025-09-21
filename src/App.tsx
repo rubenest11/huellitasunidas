@@ -12,8 +12,9 @@ import { Footer } from './components/Footer';
 // Función para guardar datos en localStorage
 const saveShelterData = (data: any) => {
   try {
-    console.log('Guardando datos:', data); // Debug
+    console.log('Guardando datos en localStorage:', data);
     localStorage.setItem('huellitasUnidas_shelterData', JSON.stringify(data));
+    console.log('Datos guardados exitosamente');
   } catch (error) {
     console.error('Error saving shelter data:', error);
   }
@@ -23,17 +24,17 @@ const saveShelterData = (data: any) => {
 const loadShelterData = () => {
   try {
     const savedData = localStorage.getItem('huellitasUnidas_shelterData');
-    console.log('Datos cargados del localStorage:', savedData); // Debug
+    console.log('Cargando datos del localStorage:', savedData ? 'Datos encontrados' : 'No hay datos');
     if (savedData && savedData !== 'undefined') {
       const parsedData = JSON.parse(savedData);
-      console.log('Datos parseados:', parsedData); // Debug
+      console.log('Datos parseados exitosamente');
       return parsedData;
     }
   } catch (error) {
     console.error('Error loading shelter data:', error);
   }
   
-  console.log('Usando datos iniciales por defecto'); // Debug
+  console.log('Usando datos iniciales por defecto');
   // Datos iniciales por defecto
   return {
     'refugio-san-angel': {
@@ -113,6 +114,7 @@ function App() {
 
   // Función para actualizar datos y guardar en localStorage
   const updateShelterData = (newData: any) => {
+    console.log('Actualizando datos del refugio:', newData);
     setShelterData(newData);
     saveShelterData(newData);
   };

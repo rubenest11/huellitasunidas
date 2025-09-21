@@ -8,6 +8,8 @@ interface AdoptionSectionProps {
 }
 
 export const AdoptionSection: React.FC<AdoptionSectionProps> = ({ onDogSelect, onDogGallery, dogs }) => {
+  console.log('AdoptionSection recibió dogs:', dogs);
+  
   // Convertir datos del admin al formato esperado por AdoptionCard
   const formattedDogs = dogs.map(dog => ({
     id: dog.id,
@@ -16,19 +18,19 @@ export const AdoptionSection: React.FC<AdoptionSectionProps> = ({ onDogSelect, o
     breed: dog.breed,
     size: dog.size || "Mediano",
     gender: dog.gender || "Hembra", 
-    description: dog.description || `${dog.name} es un perrito muy especial que busca un hogar amoroso.`,
+    description: dog.description || `${dog.name || 'Este perrito'} es muy especial que busca un hogar amoroso.`,
     image: dog.images && dog.images.length > 0 ? dog.images[0] : "https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=800",
-    traits: dog.traits || ["Cariñoso", "Juguetón", "Leal"],
+    traits: Array.isArray(dog.traits) ? dog.traits : ["Cariñoso", "Juguetón", "Leal"],
     vaccinated: dog.vaccinated || false,
     sterilized: dog.sterilized || false,
     personality: dog.personality || { energy: 50, friendliness: 50, training: 50, independence: 50 },
-    requirements: dog.requirements || [],
+    requirements: Array.isArray(dog.requirements) ? dog.requirements : [],
     medicalInfo: dog.medicalInfo || '',
     story: dog.story || '',
-    location: dog.shelter === 'Refugio San Ángel' ? 'Ciudad de México' :
-              dog.shelter === 'Patitas Felices' ? 'Guadalajara, Jalisco' :
-              dog.shelter === 'Hogar Canino' ? 'Monterrey, Nuevo León' : 'México'
+    location: dog.location || 'México'
   }));
+  
+  console.log('AdoptionSection formattedDogs:', formattedDogs);
 
   return (
     <section id="adoptions-section" className="space-y-8">
