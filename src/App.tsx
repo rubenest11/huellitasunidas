@@ -74,13 +74,48 @@ function App() {
   const [selectedShelter, setSelectedShelter] = useState<number | null>(null);
   const [shelterData, setShelterData] = useState(initialShelterData);
 
+  // Función para agregar información del refugio a las donaciones
+  const enrichDonationsWithShelterInfo = (donations: any[]) => {
+    return donations.map(donation => {
+      // Encontrar a qué refugio pertenece esta donación
+      let shelterName = 'Refugio';
+      let location = 'México';
+      
+      Object.entries(shelterData).forEach(([shelterId, shelter]) => {
+        const shelterDonations = (shelter as any).donations || [];
+        if (shelterDonations.find((d: any) => d.id === donation.id)) {
+          switch(shelterId) {
+            case 'refugio-san-angel':
+              shelterName = 'Refugio San Ángel';
+              location = 'Ciudad de México';
+              break;
+            case 'patitas-felices':
+              shelterName = 'Patitas Felices Guadalajara';
+              location = 'Guadalajara, Jalisco';
+              break;
+            case 'hogar-canino':
+              shelterName = 'Hogar Canino Monterrey';
+              location = 'Monterrey, Nuevo León';
+              break;
+          }
+        }
+      });
+      
+      return {
+        ...donation,
+        shelterName,
+        location
+      };
+    });
+  };
+
   // Función para obtener todas las donaciones combinadas
   const getAllDonations = () => {
     const allDonations = [];
     Object.values(shelterData).forEach(shelter => {
       allDonations.push(...shelter.donations);
     });
-    return allDonations;
+    return enrichDonationsWithShelterInfo(allDonations);
   };
 
   // Función para obtener todos los perros combinados

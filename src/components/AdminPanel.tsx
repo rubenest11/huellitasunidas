@@ -330,7 +330,19 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
         } else {
           // Agregar nueva donación
           const newId = Math.max(...newData[shelterKey].donations.map((d: any) => d.id), 0) + 1;
-          newData[shelterKey].donations.push({ ...data, id: newId });
+          const newDonation = {
+            ...data,
+            id: newId,
+            // Asegurar que tenga todos los campos necesarios para la vista pública
+            title: data.title || 'Nueva Campaña',
+            subtitle: data.subtitle || 'Descripción del caso',
+            story: data.story || 'Historia del caso',
+            raised: data.raised || 0,
+            goal: data.goal || 1000,
+            status: data.status || 'active',
+            images: data.images || []
+          };
+          newData[shelterKey].donations.push(newDonation);
         }
       } else if (activeTab === 'adoptions') {
         if (editingItem) {
@@ -341,7 +353,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
         } else {
           // Agregar nueva adopción
           const newId = Math.max(...newData[shelterKey].dogs.map((d: any) => d.id), 0) + 1;
-          newData[shelterKey].dogs.push({ ...data, id: newId });
+          const newDog = {
+            ...data,
+            id: newId,
+            // Asegurar que tenga todos los campos necesarios para la vista pública
+            name: data.name || 'Nuevo Perrito',
+            age: data.age || '1 año',
+            breed: data.breed || 'Mestizo',
+            status: data.status || 'available',
+            images: data.images || []
+          };
+          newData[shelterKey].dogs.push(newDog);
         }
       }
       

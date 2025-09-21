@@ -86,7 +86,14 @@ export const DonationDetail: React.FC<DonationDetailProps> = ({ donationId, onBa
     for (const shelter of Object.values(shelterData)) {
       const foundDonation = (shelter as any).donations.find((d: any) => d.id === donationId);
       if (foundDonation) {
-        return foundDonation;
+        return {
+          ...foundDonation,
+          // Asegurar compatibilidad con casos nuevos y existentes
+          title: foundDonation.title,
+          subtitle: foundDonation.subtitle || foundDonation.description,
+          story: foundDonation.story,
+          images: foundDonation.images || []
+        };
       }
     }
     return null;
@@ -95,12 +102,31 @@ export const DonationDetail: React.FC<DonationDetailProps> = ({ donationId, onBa
   const updatedDonation = findUpdatedDonation();
   const donation = donationDetails[donationId as keyof typeof donationDetails];
   
-  // Usar datos actualizados si están disponibles
-  const currentTitle = updatedDonation?.title || donation?.title;
-  const currentSubtitle = updatedDonation?.subtitle || donation?.description;
-  const currentStory = updatedDonation?.story || donation?.story;
+  // Usar datos actualizados si están disponibles, con fallbacks para casos nuevos
+  const currentTitle = updatedDonation?.title || donation?.title || 'Campaña de Donación';
+  const currentSubtitle = updatedDonation?.subtitle || donation?.description || 'Descripción del caso';
+  const currentStory = updatedDonation?.story || donation?.story || 'Historia del caso';
   
-  if (!donation) {
+  // Para casos nuevos que no están en donationDetails, usar datos del updatedDonation
+  const currentDonation = donation || {
+    id: donationId,
+    title: currentTitle,
+    description: currentSubtitle,
+    story: currentStory,
+    images: updatedDonation?.images || [],
+    raised: updatedDonation?.raised || 0,
+    goal: updatedDonation?.goal || 1000,
+    donors: Math.floor((updatedDonation?.raised || 0) / 50),
+    urgent: updatedDonation?.status === 'urgent',
+    createdDate: "Fecha de creación",
+    endDate: "Fecha límite",
+    category: "Campaña de Donación",
+    location: "México",
+    veterinary: "Veterinaria",
+    shelter: "Refugio"
+  };
+  
+  if (!donation && !updatedDonation) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -118,15 +144,15 @@ export const DonationDetail: React.FC<DonationDetailProps> = ({ donationId, onBa
 
   // Usar stats dinámicos en lugar de datos estáticos
   const currentRaised = stats.raised;
-  const percentage = Math.round((currentRaised / donation.goal) * 100);
-  const remaining = donation.goal - currentRaised;
+  const percentage = Math.round((currentRaised / currentDonation.goal) * 100);
+  const remaining = currentDonation.goal - currentRaised;
 
   const handleDonationSuccess = async (donorName: string, amount: number, message: string) => {
     await addDonation(donorName, amount, message);
   };
 
   // Usar imágenes actualizadas si están disponibles
-  const currentImages = updatedDonation?.images || donation.images;
+  const currentImages = updatedDonation?.images || currentDonation.images || ["https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800"];
 
   return (
     <div className="min-h-screen bg-white">

@@ -24,15 +24,15 @@ export const DonationSection: React.FC<DonationSectionProps> = ({ onDonationSele
   const formattedDonations = donations.map(donation => ({
     id: donation.id,
     title: donation.title,
-    description: donation.subtitle || 'Necesita cirugía urgente para caminar de nuevo.',
+    description: donation.subtitle || donation.description || 'Necesita cirugía urgente para caminar de nuevo.',
     image: donation.images && donation.images.length > 0 ? donation.images[0] : "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800",
     raised: donation.raised,
     goal: donation.goal,
     donors: Math.floor(donation.raised / 50), // Calcular donadores aproximados
     urgent: donation.status === 'urgent',
-    shelter: shelterMapping[donation.id as keyof typeof shelterMapping] || 'Refugio',
-    location: locationMapping[donation.id as keyof typeof locationMapping] || 'México',
-    shelterName: shelterMapping[donation.id as keyof typeof shelterMapping] || 'Refugio'
+    shelter: donation.shelterName || shelterMapping[donation.id as keyof typeof shelterMapping] || 'Refugio',
+    location: donation.location || locationMapping[donation.id as keyof typeof locationMapping] || 'México',
+    shelterName: donation.shelterName || shelterMapping[donation.id as keyof typeof shelterMapping] || 'Refugio'
   }));
 
   return (
