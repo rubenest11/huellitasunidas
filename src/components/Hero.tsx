@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowDown } from 'lucide-react';
+import { ArrowDown, Heart } from 'lucide-react';
 
 export const Hero: React.FC = () => {
   return (
@@ -35,10 +35,8 @@ export const Hero: React.FC = () => {
         <div className="mt-8 sm:mt-12 text-center animate-bounce">
           <ArrowDown className="w-8 h-8 mx-auto opacity-70" />
         </div>
-      </div>
-    </section>
-  );
-};
+        <div className="text-center">
+          <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
           Cada Perrito
           <br />
           <span className="text-yellow-300">Merece Amor</span>
@@ -62,6 +60,7 @@ export const Hero: React.FC = () => {
         </div>
         <div className="mt-8 sm:mt-12 animate-bounce">
           <ArrowDown className="w-8 h-8 mx-auto opacity-70" />
+        </div>
         </div>
       </div>
     </section>
