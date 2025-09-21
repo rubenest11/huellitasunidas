@@ -22,7 +22,7 @@ const saveShelterData = (data: any) => {
 const loadShelterData = () => {
   try {
     const savedData = localStorage.getItem('huellitasUnidas_shelterData');
-    if (savedData) {
+    if (savedData && savedData !== 'undefined') {
       return JSON.parse(savedData);
     }
   } catch (error) {
