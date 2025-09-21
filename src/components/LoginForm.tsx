@@ -46,6 +46,16 @@ const shelters: Shelter[] = [
     email: 'info@hogarcanino.org',
     phone: '+52 81 5555 1234',
     registrationDate: '10 de junio, 2023'
+  },
+  {
+    id: 'lomitos-felices',
+    name: 'Refugio Lomitos Felices',
+    code: '842196',
+    location: 'Puebla',
+    shelterID: 'LF004',
+    email: 'contacto@lomitosfelices.org',
+    phone: '+52 222 345 6789',
+    registrationDate: '5 de agosto, 2023'
   }
 ];
 

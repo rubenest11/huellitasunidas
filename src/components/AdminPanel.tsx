@@ -1172,6 +1172,30 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
         newData[shelterKey].dogs = newData[shelterKey].dogs.filter((dog: any) => dog.id !== id);
       }
       
+      // También actualizar en la sección pública de refugios
+      const publicSheltersData = JSON.parse(localStorage.getItem('huellitasUnidas_publicShelters') || '{}');
+      publicSheltersData[currentShelter.id] = {
+        ...publicSheltersData[currentShelter.id],
+        name: updatedData.name,
+        location: updatedData.location,
+        description: updatedData.description,
+        image: updatedData.image,
+        established: updatedData.established,
+        contact: {
+          phone: updatedData.phone,
+          email: updatedData.email,
+          website: updatedData.website
+        },
+        services: updatedData.services ? updatedData.services.split(',').map(s => s.trim()) : [],
+        capacity: parseInt(updatedData.capacity) || 0,
+        currentDogs: parseInt(updatedData.currentDogs) || 0,
+        dogsRescued: parseInt(updatedData.dogsRescued) || 0,
+        dogsAdopted: parseInt(updatedData.dogsAdopted) || 0,
+        totalRaised: parseInt(updatedData.totalRaised) || 0,
+        activeCampaigns: parseInt(updatedData.activeCampaigns) || 0
+      };
+      localStorage.setItem('huellitasUnidas_publicShelters', JSON.stringify(publicSheltersData));
+      
       // Actualizar el estado y guardar en localStorage
       setShelterData(newData);
     }

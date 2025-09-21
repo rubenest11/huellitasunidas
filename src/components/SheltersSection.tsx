@@ -121,14 +121,87 @@ const shelters = [
     services: ["Educación Comunitaria", "Voluntariado", "Adopciones", "Sustentabilidad"],
     capacity: 50,
     currentDogs: 28
+  },
+  {
+    id: 7,
+    name: "Refugio Lomitos Felices",
+    location: "Puebla, Puebla",
+    description: "Refugio especializado en perros pequeños y medianos con programas de rehabilitación conductual.",
+    image: "https://images.pexels.com/photos/4498185/pexels-photo-4498185.jpeg?auto=compress&cs=tinysrgb&w=800",
+    dogsRescued: 234,
+    dogsAdopted: 189,
+    activeCampaigns: 2,
+    totalRaised: 15680,
+    established: "2023",
+    contact: {
+      phone: "+52 222 345 6789",
+      email: "contacto@lomitosfelices.org",
+      website: "www.lomitosfelices.org"
+    },
+    services: ["Rehabilitación Conductual", "Perros Pequeños", "Adopciones", "Entrenamiento"],
+    capacity: 40,
+    currentDogs: 22
   }
 ];
+
+// Función para cargar refugios desde localStorage
+const loadSheltersFromStorage = () => {
+  try {
+    const publicShelters = localStorage.getItem('huellitasUnidas_publicShelters');
+    const registeredShelters = localStorage.getItem('huellitasUnidas_shelters');
+    
+    let updatedShelters = [...shelters];
+    
+    if (publicShelters) {
+      const publicData = JSON.parse(publicShelters);
+      updatedShelters = updatedShelters.map(shelter => {
+        const publicInfo = publicData[shelter.id];
+        if (publicInfo) {
+          return {
+            ...shelter,
+            ...publicInfo
+          };
+        }
+        return shelter;
+      });
+    }
+    
+    return updatedShelters;
+  } catch (error) {
+    console.error('Error loading shelters from storage:', error);
+    return shelters;
+  }
+};
 
 interface SheltersSectionProps {
   onShelterSelect: (shelterId: number) => void;
 }
 
 export const SheltersSection: React.FC<SheltersSectionProps> = ({ onShelterSelect }) => {
+  const [currentShelters, setCurrentShelters] = React.useState(shelters);
+  
+  React.useEffect(() => {
+    // Cargar refugios actualizados al montar el componente
+    const updatedShelters = loadSheltersFromStorage();
+    setCurrentShelters(updatedShelters);
+    
+    // Escuchar cambios en localStorage
+    const handleStorageChange = () => {
+      const updatedShelters = loadSheltersFromStorage();
+      setCurrentShelters(updatedShelters);
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // También verificar cambios cada 2 segundos (para cambios en la misma pestaña)
+    const interval = setInterval(handleStorageChange, 2000);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
+  
   return (
     <section id="shelters-section" className="space-y-8">
       <div className="text-center">
@@ -139,7 +212,7 @@ export const SheltersSection: React.FC<SheltersSectionProps> = ({ onShelterSelec
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {shelters.map((shelter) => (
+        {currentShelters.map((shelter) => (
           <ShelterCard 
             key={shelter.id} 
             shelter={shelter} 
