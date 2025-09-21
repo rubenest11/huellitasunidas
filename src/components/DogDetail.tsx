@@ -224,6 +224,11 @@ export const DogDetail: React.FC<DogDetailProps> = ({ dogId, onBack }) => {
               className="w-full h-96 lg:h-[500px] object-cover rounded-2xl"
             />
             {dogData.urgent && (
+              <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                Urgente
+              </div>
+            )}
+            <button 
               onClick={() => setShowAllImages(true)}
               className="absolute bottom-4 right-4 bg-white bg-opacity-90 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-opacity-100 transition-all"
             >
