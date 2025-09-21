@@ -21,10 +21,51 @@ const shelterNames = {
   'hogar-canino': 'Hogar Canino'
 };
 
+// Función para cargar nombres de refugios dinámicamente
+const loadShelterNames = () => {
+  const names = { ...shelterNames };
+  try {
+    const savedShelters = localStorage.getItem('huellitasUnidas_shelters');
+    if (savedShelters) {
+      const parsed = JSON.parse(savedShelters);
+      Object.values(parsed).forEach((shelter: any) => {
+        names[shelter.id as keyof typeof names] = shelter.name;
+      });
+    }
+  } catch (error) {
+    console.error('Error loading shelter names:', error);
+  }
+  return names;
+};
+
 const shelterColors = {
   'refugio-san-angel': 'from-orange-500 to-red-500',
   'patitas-felices': 'from-blue-500 to-purple-500',
   'hogar-canino': 'from-green-500 to-teal-500'
+};
+
+// Función para asignar colores a refugios nuevos
+const getShelterColor = (shelterId: string) => {
+  const colors = [
+    'from-orange-500 to-red-500',
+    'from-blue-500 to-purple-500', 
+    'from-green-500 to-teal-500',
+    'from-pink-500 to-rose-500',
+    'from-indigo-500 to-blue-500',
+    'from-yellow-500 to-orange-500'
+  ];
+  
+  if (shelterColors[shelterId as keyof typeof shelterColors]) {
+    return shelterColors[shelterId as keyof typeof shelterColors];
+  }
+  
+  // Asignar color basado en hash del ID
+  const hash = shelterId.split('').reduce((a, b) => {
+    a = ((a << 5) - a) + b.charCodeAt(0);
+    return a & a;
+  }, 0);
+  
+  return colors[Math.abs(hash) % colors.length];
 };
 
 const mockDonations = [
@@ -73,6 +114,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
   const currentShelterData = shelterData[currentShelter.id as keyof typeof shelterData];
   const currentDonations = currentShelterData?.donations || [];
   const currentDogs = currentShelterData?.dogs || [];
+  const dynamicShelterNames = loadShelterNames();
+  const currentShelterColor = getShelterColor(currentShelter.id);
 
   const EditForm = ({ item, type, onSave, onCancel }: any) => {
     const [formData, setFormData] = useState(item || {});
@@ -706,7 +749,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
             </div>
             <button
               onClick={() => setShowAddForm(true)}
-              className={`bg-gradient-to-r ${shelterColors[currentShelter.id as keyof typeof shelterColors]} text-white font-semibold py-2 px-4 rounded-xl hover:opacity-90 transition-all duration-300 flex items-center gap-2`}
+              className={`bg-gradient-to-r ${currentShelterColor} text-white font-semibold py-2 px-4 rounded-xl hover:opacity-90 transition-all duration-300 flex items-center gap-2`}
             >
               <Plus className="w-5 h-5" />
               Agregar
@@ -937,7 +980,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
 
           {activeTab === 'shelters' && (
             <div className="p-6 text-center text-gray-500">
-              <div className={`bg-gradient-to-r ${shelterColors[currentShelter.id as keyof typeof shelterColors]} text-white rounded-2xl p-8 mb-6`}>
+              <div className={`bg-gradient-to-r ${currentShelterColor} text-white rounded-2xl p-8 mb-6`}>
                 <h3 className="text-2xl font-bold mb-2">{currentShelter.name}</h3>
                 <p className="text-lg opacity-90">{currentShelter.location}</p>
               </div>

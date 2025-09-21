@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { Lock, Eye, EyeOff, Building2 } from 'lucide-react';
 
 interface Shelter {
@@ -29,6 +30,25 @@ const shelters: Shelter[] = [
   }
 ];
 
+// Función para cargar refugios registrados dinámicamente
+const loadRegisteredShelters = (): Shelter[] => {
+  try {
+    const savedShelters = localStorage.getItem('huellitasUnidas_shelters');
+    if (savedShelters) {
+      const parsed = JSON.parse(savedShelters);
+      return Object.values(parsed).map((shelter: any) => ({
+        id: shelter.id,
+        name: shelter.name,
+        code: shelter.code,
+        location: shelter.location
+      }));
+    }
+  } catch (error) {
+    console.error('Error loading registered shelters:', error);
+  }
+  return [];
+};
+
 interface LoginFormProps {
   onLogin: (shelter: Shelter) => void;
   onCancel: () => void;
@@ -40,6 +60,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onCancel }) => {
   const [showCode, setShowCode] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [allShelters, setAllShelters] = useState<Shelter[]>([]);
+
+  // Cargar refugios al montar el componente
+  useEffect(() => {
+    const defaultShelters = shelters;
+    const registeredShelters = loadRegisteredShelters();
+    setAllShelters([...defaultShelters, ...registeredShelters]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +80,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onCancel }) => {
       return;
     }
 
-    const shelter = shelters.find(s => s.id === selectedShelter);
+    const shelter = allShelters.find(s => s.id === selectedShelter);
     if (!shelter) {
       setError('Refugio no encontrado');
       setLoading(false);
@@ -102,7 +130,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onCancel }) => {
                 required
               >
                 <option value="">Seleccionar refugio...</option>
-                {shelters.map((shelter) => (
+                {allShelters.map((shelter) => (
                   <option key={shelter.id} value={shelter.id}>
                     {shelter.name} - {shelter.location}
                   </option>
