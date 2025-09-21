@@ -102,26 +102,6 @@ const shelters = [
     capacity: 60,
     currentDogs: 34
   },
-  {
-    id: 6,
-    name: "Refugio Lomitos Felices",
-    location: "Puebla, Puebla",
-    description: "Refugio especializado en perros pequeños y medianos con programas de rehabilitación conductual.",
-    image: "https://images.pexels.com/photos/4498185/pexels-photo-4498185.jpeg?auto=compress&cs=tinysrgb&w=800",
-    dogsRescued: 234,
-    dogsAdopted: 189,
-    activeCampaigns: 2,
-    totalRaised: 15680,
-    established: "2023",
-    contact: {
-      phone: "+52 222 345 6789",
-      email: "contacto@lomitosfelices.org",
-      website: "www.lomitosfelices.org"
-    },
-    services: ["Rehabilitación Conductual", "Perros Pequeños", "Adopciones", "Entrenamiento"],
-    capacity: 40,
-    currentDogs: 22
-  }
 ];
 
 // Función para cargar refugios desde localStorage
