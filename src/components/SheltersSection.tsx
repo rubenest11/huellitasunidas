@@ -121,7 +121,6 @@ const shelters = [
     services: ["Educación Comunitaria", "Voluntariado", "Adopciones", "Sustentabilidad"],
     capacity: 50,
     currentDogs: 28
-  }
   },
   {
     id: 7,
@@ -142,6 +141,7 @@ const shelters = [
     services: ["Rescate Costero", "Rehabilitación", "Adopciones", "Educación"],
     capacity: 70,
     currentDogs: 42
+  }
 ];
 
 interface SheltersSectionProps {
