@@ -1,14 +1,14 @@
 import React from 'react';
 import { useEffect } from 'react';
-import { Heart, Home, DollarSign, Building2, Settings } from 'lucide-react';
+import { Heart, Home, DollarSign, Building2, Settings, UserPlus } from 'lucide-react';
 
 interface HeaderProps {
-  activeSection: 'donations' | 'adoptions' | 'shelters' | 'admin';
-  setActiveSection: (section: 'donations' | 'adoptions' | 'shelters' | 'admin') => void;
+  activeSection: 'donations' | 'adoptions' | 'shelters' | 'register' | 'admin';
+  setActiveSection: (section: 'donations' | 'adoptions' | 'shelters' | 'register' | 'admin') => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ activeSection, setActiveSection }) => {
-  const scrollToSection = (section: 'donations' | 'adoptions' | 'shelters' | 'admin') => {
+  const scrollToSection = (section: 'donations' | 'adoptions' | 'shelters' | 'register' | 'admin') => {
     setActiveSection(section);
     
     // No hacer scroll para admin ya que es una página separada
@@ -75,6 +75,17 @@ export const Header: React.FC<HeaderProps> = ({ activeSection, setActiveSection 
             >
               <Building2 className="w-4 h-4 sm:w-5 sm:h-5" />
               <span>Refugios</span>
+            </button>
+            <button
+              onClick={() => scrollToSection('register')}
+              className={`flex items-center justify-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-xl font-medium transition-all duration-300 text-xs sm:text-sm ${
+                activeSection === 'register'
+                  ? 'bg-purple-500 text-white shadow-lg transform scale-105'
+                  : 'text-gray-600 hover:text-purple-500 hover:bg-white'
+              }`}
+            >
+              <UserPlus className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>Registrate</span>
             </button>
             <div className="w-px bg-gray-300 mx-1"></div>
             <button

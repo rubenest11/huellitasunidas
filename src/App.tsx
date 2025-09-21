@@ -4,6 +4,7 @@ import { Hero } from './components/Hero';
 import { DonationSection } from './components/DonationSection';
 import { AdoptionSection } from './components/AdoptionSection';
 import { SheltersSection } from './components/SheltersSection';
+import { RegistrationSection } from './components/RegistrationSection';
 import { DogDetail } from './components/DogDetail';
 import { DonationDetail } from './components/DonationDetail';
 import { AdminPanel } from './components/AdminPanel';
@@ -106,7 +107,7 @@ const loadShelterData = () => {
 const initialShelterData = loadShelterData();
 
 function App() {
-  const [activeSection, setActiveSection] = useState<'donations' | 'adoptions' | 'shelters' | 'admin'>('donations');
+  const [activeSection, setActiveSection] = useState<'donations' | 'adoptions' | 'shelters' | 'register' | 'admin'>('donations');
   const [selectedDog, setSelectedDog] = useState<number | null>(null);
   const [selectedDonation, setSelectedDonation] = useState<number | null>(null);
   const [selectedShelter, setSelectedShelter] = useState<number | null>(null);
@@ -223,6 +224,8 @@ function App() {
           />
         ) : activeSection === 'shelters' ? (
           <SheltersSection onShelterSelect={setSelectedShelter} />
+        ) : activeSection === 'register' ? (
+          <RegistrationSection />
         ) : (
           <AdoptionSection 
             onDogSelect={setSelectedDog}
