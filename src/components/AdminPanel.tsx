@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Plus, Edit3, Trash2, Search, Filter, Save, X, Camera, Building2, Users, Calendar, Heart, MapPin, Phone, Mail } from 'lucide-react';
 import { LoginForm } from './LoginForm';
 
@@ -88,6 +88,138 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
   const [searchTerm, setSearchTerm] = useState('');
   const [editingItem, setEditingItem] = useState<any>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [allShelters, setAllShelters] = useState<any[]>([]);
+  const [shelterProfile, setShelterProfile] = useState<any>(null);
+
+  // Cargar datos del refugio actual
+  useEffect(() => {
+    if (currentShelter && currentShelter.id !== 'super-admin') {
+      // Cargar datos específicos del refugio
+      const currentData = shelterData[currentShelter.id as keyof typeof shelterData];
+      if (!currentData) {
+        // Inicializar datos vacíos si no existen
+        const newData = { ...shelterData };
+        newData[currentShelter.id as keyof typeof newData] = {
+          donations: [],
+          dogs: []
+        };
+        setShelterData(newData);
+      }
+    }
+  }, [currentShelter]);
+
+  // Cargar perfil del refugio
+  useEffect(() => {
+    if (currentShelter && currentShelter.id !== 'super-admin') {
+      loadShelterProfile();
+    }
+  }, [currentShelter]);
+
+  const loadShelterProfile = () => {
+    try {
+      const savedShelters = localStorage.getItem('huellitasUnidas_shelters');
+      if (savedShelters) {
+        const shelters = JSON.parse(savedShelters);
+        const profile = shelters[currentShelter.id];
+        if (profile) {
+          setShelterProfile(profile);
+        } else {
+          // Crear perfil básico si no existe
+          const basicProfile = {
+            id: currentShelter.id,
+            shelterID: currentShelter.shelterID || generateShelterID(),
+            name: currentShelter.name,
+            location: currentShelter.location || 'México',
+            email: currentShelter.email || 'contacto@refugio.org',
+            phone: currentShelter.phone || '+52 55 1234 5678',
+            description: 'Refugio dedicado al rescate y cuidado de perritos necesitados.',
+            established: '2020',
+            capacity: 50,
+            services: ['Rescate', 'Rehabilitación', 'Adopciones', 'Esterilización'],
+            website: 'www.refugio.org',
+            registrationDate: new Date().toLocaleDateString('es-ES', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })
+          };
+          setShelterProfile(basicProfile);
+          // Guardar perfil básico
+          shelters[currentShelter.id] = basicProfile;
+          localStorage.setItem('huellitasUnidas_shelters', JSON.stringify(shelters));
+        }
+      }
+    } catch (error) {
+      console.error('Error loading shelter profile:', error);
+    }
+  };
+
+  const handleUpdateShelterProfile = (updatedProfile: any) => {
+    try {
+      // Actualizar estado local
+      setShelterProfile(updatedProfile);
+      
+      // Guardar en localStorage
+      const savedShelters = JSON.parse(localStorage.getItem('huellitasUnidas_shelters') || '{}');
+      savedShelters[currentShelter.id] = updatedProfile;
+      localStorage.setItem('huellitasUnidas_shelters', JSON.stringify(savedShelters));
+      
+      // Recargar datos para Super Admin
+      loadAllShelters();
+      
+      console.log('Perfil del refugio actualizado:', updatedProfile);
+    } catch (error) {
+      console.error('Error updating shelter profile:', error);
+    }
+  };
+
+  const loadAllShelters = () => {
+    // Refugios predeterminados (excluyendo super admin)
+    const defaultShelters = [
+      {
+        id: 'refugio-san-angel',
+        shelterID: 'RSA01',
+        name: 'Refugio San Ángel',
+        location: 'Ciudad de México',
+        email: 'contacto@refugiosanangel.org',
+        phone: '+52 55 1234 5678',
+        registrationDate: '15 de marzo, 2023',
+        createdAt: '2023-03-15T00:00:00.000Z'
+      },
+      {
+        id: 'patitas-felices',
+        shelterID: 'PF002',
+        name: 'Patitas Felices',
+        location: 'Guadalajara, Jalisco',
+        email: 'adopciones@patitasfelices.org',
+        phone: '+52 33 9876 5432',
+        registrationDate: '22 de abril, 2023',
+        createdAt: '2023-04-22T00:00:00.000Z'
+      },
+      {
+        id: 'hogar-canino',
+        shelterID: 'HC003',
+        name: 'Hogar Canino',
+        location: 'Monterrey, Nuevo León',
+        email: 'info@hogarcanino.org',
+        phone: '+52 81 5555 4444',
+        registrationDate: '10 de mayo, 2023',
+        createdAt: '2023-05-10T00:00:00.000Z'
+      }
+    ];
+
+    // Refugios registrados dinámicamente
+    try {
+      const savedShelters = localStorage.getItem('huellitasUnidas_shelters');
+      const dynamicShelters = savedShelters ? Object.values(JSON.parse(savedShelters)) : [];
+      
+      const allShelters = [...defaultShelters, ...dynamicShelters];
+      setAllShelters(allShelters);
+    } catch (error) {
+      console.error('Error loading shelters:', error);
+      setAllShelters(defaultShelters);
+    }
+  };
 
   const handleLogin = (shelter: Shelter) => {
     setCurrentShelter(shelter);
@@ -784,8 +916,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
           <button
             onClick={() => setActiveTab('shelter')}
             className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
-              activeTab === 'shelters'
-                ? 'bg-green-500 text-white shadow-lg'
               activeTab === 'shelter' ? 'bg-red-500 text-white' : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
@@ -1019,54 +1149,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
       loadAllShelters();
     }, []);
 
-    const loadAllShelters = () => {
-      // Refugios predeterminados (excluyendo super admin)
-      const defaultShelters = [
-        {
-          id: 'refugio-san-angel',
-          shelterID: 'RSA01',
-          name: 'Refugio San Ángel',
-          location: 'Ciudad de México',
-          email: 'contacto@refugiosanangel.org',
-          phone: '+52 55 1234 5678',
-          registrationDate: '15 de marzo, 2023',
-          createdAt: '2023-03-15T00:00:00.000Z'
-        },
-        {
-          id: 'patitas-felices',
-          shelterID: 'PF002',
-          name: 'Patitas Felices',
-          location: 'Guadalajara, Jalisco',
-          email: 'adopciones@patitasfelices.org',
-          phone: '+52 33 9876 5432',
-          registrationDate: '22 de abril, 2023',
-          createdAt: '2023-04-22T00:00:00.000Z'
-        },
-        {
-          id: 'hogar-canino',
-          shelterID: 'HC003',
-          name: 'Hogar Canino',
-          location: 'Monterrey, Nuevo León',
-          email: 'info@hogarcanino.org',
-          phone: '+52 81 5555 4444',
-          registrationDate: '10 de mayo, 2023',
-          createdAt: '2023-05-10T00:00:00.000Z'
-        }
-      ];
-
-      // Refugios registrados dinámicamente
-      try {
-        const savedShelters = localStorage.getItem('huellitasUnidas_shelters');
-        const dynamicShelters = savedShelters ? Object.values(JSON.parse(savedShelters)) : [];
-        
-        const allShelters = [...defaultShelters, ...dynamicShelters];
-        setAllRegisteredShelters(allShelters);
-      } catch (error) {
-        console.error('Error loading shelters:', error);
-        setAllRegisteredShelters(defaultShelters);
-      }
-    };
-
     const filteredShelters = allRegisteredShelters.filter(shelter =>
       shelter.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       shelter.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -1179,13 +1261,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ onBack, shelterData, set
         {filteredShelters.length === 0 && (
           <div className="text-center py-12">
             <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-        {activeTab === 'shelter' && (
-          <ShelterProfileEditor 
-            currentShelter={currentShelter}
-            onUpdateShelter={handleUpdateShelterProfile}
-          />
-        )}
-        {activeTab === 'shelters' && (
+            <p className="text-gray-500 text-lg">No se encontraron refugios</p>
           </div>
         )}
       </div>
