@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useEffect } from 'react';
 import { Lock, Eye, EyeOff, Building2 } from 'lucide-react';
 
 interface Shelter {
@@ -11,62 +10,24 @@ interface Shelter {
 
 const shelters: Shelter[] = [
   {
-    id: 'super-admin',
-    name: 'Super Admin',
-    code: '777777',
-    location: 'Sistema',
-    shelterID: 'ADMIN'
-  },
-  {
     id: 'refugio-san-angel',
     name: 'Refugio San Ángel',
     code: '248159',
-    location: 'Ciudad de México',
-    shelterID: 'RSA01',
-    email: 'contacto@refugiosanangel.org',
-    phone: '+52 55 1234 5678',
-    registrationDate: '15 de marzo, 2023'
+    location: 'Ciudad de México'
   },
   {
     id: 'patitas-felices',
     name: 'Patitas Felices',
     code: '736482',
-    location: 'Guadalajara',
-    shelterID: 'PF002',
-    email: 'adopciones@patitasfelices.org',
-    phone: '+52 33 9876 5432',
-    registrationDate: '22 de abril, 2023'
+    location: 'Guadalajara'
   },
   {
     id: 'hogar-canino',
     name: 'Hogar Canino',
     code: '591037',
-    location: 'Monterrey',
-    shelterID: 'HC003',
-    email: 'info@hogarcanino.org',
-    phone: '+52 81 5555 1234',
-    registrationDate: '10 de junio, 2023'
-  },
-];
-
-// Función para cargar refugios registrados dinámicamente
-const loadRegisteredShelters = (): Shelter[] => {
-  try {
-    const savedShelters = localStorage.getItem('huellitasUnidas_shelters');
-    if (savedShelters) {
-      const parsed = JSON.parse(savedShelters);
-      return Object.values(parsed).map((shelter: any) => ({
-        id: shelter.id,
-        name: shelter.name,
-        code: shelter.code,
-        location: shelter.location
-      }));
-    }
-  } catch (error) {
-    console.error('Error loading registered shelters:', error);
+    location: 'Monterrey'
   }
-  return [];
-};
+];
 
 interface LoginFormProps {
   onLogin: (shelter: Shelter) => void;
@@ -79,17 +40,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onCancel }) => {
   const [showCode, setShowCode] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [allShelters, setAllShelters] = useState<Shelter[]>([]);
-
-  // Cargar refugios al montar el componente
-  useEffect(() => {
-    const defaultShelters = shelters;
-    const registeredShelters = loadRegisteredShelters();
-    // Super Admin siempre primero, luego refugios predeterminados, luego registrados
-    const superAdmin = defaultShelters.find(s => s.id === 'super-admin');
-    const otherDefaults = defaultShelters.filter(s => s.id !== 'super-admin');
-    setAllShelters([superAdmin, ...otherDefaults, ...registeredShelters].filter(Boolean));
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,7 +52,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onCancel }) => {
       return;
     }
 
-    const shelter = allShelters.find(s => s.id === selectedShelter);
+    const shelter = shelters.find(s => s.id === selectedShelter);
     if (!shelter) {
       setError('Refugio no encontrado');
       setLoading(false);
@@ -152,12 +102,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, onCancel }) => {
                 required
               >
                 <option value="">Seleccionar refugio...</option>
-                {allShelters.map((shelter) => (
+                {shelters.map((shelter) => (
                   <option key={shelter.id} value={shelter.id}>
-                    {shelter.id === 'super-admin' ? 
-                      '🔧 Super Admin - Sistema' : 
-                      `${shelter.name} - ${shelter.location} (ID: ${shelter.shelterID})`
-                    }
+                    {shelter.name} - {shelter.location}
                   </option>
                 ))}
               </select>

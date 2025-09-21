@@ -1,15 +1,9 @@
 import React, { useState } from 'react';
 import { Check, Star, Shield, Zap, Users, BarChart3, Heart, Phone, Mail, MapPin } from 'lucide-react';
-import { ShelterRegistrationForm } from './ShelterRegistrationForm';
 
-interface RegistrationSectionProps {}
-
-export const RegistrationSection: React.FC<RegistrationSectionProps> = () => {
+export const RegistrationSection: React.FC = () => {
   const [selectedPlan, setSelectedPlan] = useState<'trial' | 'premium' | null>(null);
   const [showContactForm, setShowContactForm] = useState(false);
-  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
-  const [registrationSuccess, setRegistrationSuccess] = useState(false);
-  const [newShelterData, setNewShelterData] = useState<any>(null);
 
   const plans = [
     {
@@ -222,13 +216,7 @@ export const RegistrationSection: React.FC<RegistrationSectionProps> = () => {
               )}
 
               <button
-                onClick={() => {
-                  if (plan.id === 'trial') {
-                    setShowRegistrationForm(true);
-                  } else {
-                    setShowContactForm(true);
-                  }
-                }}
+                onClick={() => setShowContactForm(true)}
                 className={`w-full bg-gradient-to-r ${plan.color} text-white font-semibold py-4 px-6 rounded-xl hover:opacity-90 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2`}
               >
                 <Zap className="w-5 h-5" />
@@ -323,49 +311,6 @@ export const RegistrationSection: React.FC<RegistrationSectionProps> = () => {
       </div>
 
       {showContactForm && <ContactForm />}
-      {showRegistrationForm && (
-        <ShelterRegistrationForm
-          onRegistrationSuccess={(shelterData) => {
-            setNewShelterData(shelterData);
-            setShowRegistrationForm(false);
-            setRegistrationSuccess(true);
-          }}
-          onCancel={() => setShowRegistrationForm(false)}
-        />
-      )}
-
-      {registrationSuccess && newShelterData && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-8 w-full max-w-md text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Check className="w-8 h-8 text-green-600" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">¡Perfil Creado Exitosamente!</h3>
-            <div className="bg-gray-50 rounded-xl p-4 mb-6">
-              <h4 className="font-semibold text-gray-800 mb-2">{newShelterData.name}</h4>
-              <p className="text-sm text-gray-600 mb-2">{newShelterData.location}</p>
-              <div className="bg-white rounded-lg p-3 border-2 border-dashed border-gray-300">
-                <p className="text-xs text-gray-500 mb-1">Tu código de acceso:</p>
-                <p className="text-2xl font-bold text-purple-600 tracking-widest">{newShelterData.code}</p>
-              </div>
-            </div>
-            <p className="text-gray-600 mb-6 text-sm">
-              Guarda tu código de acceso. Lo necesitarás para ingresar a tu panel administrativo.
-            </p>
-            <button
-              onClick={() => {
-                setRegistrationSuccess(false);
-                // Aquí redirigimos al panel admin
-                window.location.href = '#admin';
-                window.location.reload();
-              }}
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-3 px-6 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-300"
-            >
-              Ir a Mi Panel Administrativo
-            </button>
-          </div>
-        </div>
-      )}
     </section>
   );
 };

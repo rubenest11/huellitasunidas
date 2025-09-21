@@ -100,7 +100,7 @@ const loadShelterData = () => {
         { id: 3, name: "Luna", age: "1 año", breed: "Pastor Alemán Mix", status: "available", images: ["https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800", "https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=800"] },
         { id: 5, name: "Mía", age: "3 años", breed: "Chihuahua Mix", status: "reserved", images: ["https://images.pexels.com/photos/58997/pexels-photo-58997.jpeg?auto=compress&cs=tinysrgb&w=800"] },
       ]
-    },
+    }
   };
 };
 

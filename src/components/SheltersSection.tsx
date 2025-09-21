@@ -81,67 +81,54 @@ const shelters = [
     services: ["Rescate Fronterizo", "Adopciones Internacionales", "Transporte", "Rehabilitación"],
     capacity: 120,
     currentDogs: 78
+  },
+  {
+    id: 5,
+    name: "Amor Perruno Puebla",
+    location: "Puebla, Puebla",
+    description: "Refugio familiar que se especializa en casos de maltrato y abandono extremo.",
+    image: "https://images.pexels.com/photos/7210755/pexels-photo-7210755.jpeg?auto=compress&cs=tinysrgb&w=800",
+    dogsRescued: 543,
+    dogsAdopted: 412,
+    activeCampaigns: 4,
+    totalRaised: 29650,
+    established: "2019",
+    contact: {
+      phone: "+52 222 987 6543",
+      email: "info@amorperruno.org",
+      website: "www.amorperruno.org"
+    },
+    services: ["Rehabilitación Psicológica", "Casos de Maltrato", "Adopciones", "Terapia"],
+    capacity: 60,
+    currentDogs: 34
+  },
+  {
+    id: 6,
+    name: "Segundo Hogar Querétaro",
+    location: "Querétaro, Querétaro",
+    description: "Refugio sustentable con programas de voluntariado y educación comunitaria.",
+    image: "https://images.pexels.com/photos/6816860/pexels-photo-6816860.jpeg?auto=compress&cs=tinysrgb&w=800",
+    dogsRescued: 378,
+    dogsAdopted: 289,
+    activeCampaigns: 3,
+    totalRaised: 21450,
+    established: "2020",
+    contact: {
+      phone: "+52 442 555 7890",
+      email: "contacto@segundohogar.org",
+      website: "www.segundohogar.org"
+    },
+    services: ["Educación Comunitaria", "Voluntariado", "Adopciones", "Sustentabilidad"],
+    capacity: 50,
+    currentDogs: 28
   }
 ];
-
-// Función para cargar refugios desde localStorage
-const loadSheltersFromStorage = () => {
-  try {
-    const publicShelters = localStorage.getItem('huellitasUnidas_publicShelters');
-    const registeredShelters = localStorage.getItem('huellitasUnidas_shelters');
-    
-    let updatedShelters = [...shelters];
-    
-    if (publicShelters) {
-      const publicData = JSON.parse(publicShelters);
-      updatedShelters = updatedShelters.map(shelter => {
-        const publicInfo = publicData[shelter.id];
-        if (publicInfo) {
-          return {
-            ...shelter,
-            ...publicInfo
-          };
-        }
-        return shelter;
-      });
-    }
-    
-    return updatedShelters;
-  } catch (error) {
-    console.error('Error loading shelters from storage:', error);
-    return shelters;
-  }
-};
 
 interface SheltersSectionProps {
   onShelterSelect: (shelterId: number) => void;
 }
 
 export const SheltersSection: React.FC<SheltersSectionProps> = ({ onShelterSelect }) => {
-  const [currentShelters, setCurrentShelters] = React.useState(shelters);
-  
-  React.useEffect(() => {
-    // Cargar refugios actualizados al montar el componente
-    const updatedShelters = loadSheltersFromStorage();
-    setCurrentShelters(updatedShelters);
-    
-    // Escuchar cambios en localStorage
-    const handleStorageChange = () => {
-      const updatedShelters = loadSheltersFromStorage();
-      setCurrentShelters(updatedShelters);
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    
-    // También verificar cambios cada 2 segundos (para cambios en la misma pestaña)
-    const interval = setInterval(handleStorageChange, 2000);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      clearInterval(interval);
-    };
-  }, []);
-  
   return (
     <section id="shelters-section" className="space-y-8">
       <div className="text-center">
@@ -152,7 +139,7 @@ export const SheltersSection: React.FC<SheltersSectionProps> = ({ onShelterSelec
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {currentShelters.map((shelter) => (
+        {shelters.map((shelter) => (
           <ShelterCard 
             key={shelter.id} 
             shelter={shelter} 
