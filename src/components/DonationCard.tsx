@@ -37,7 +37,7 @@ export const DonationCard: React.FC<DonationCardProps> = ({ donation, onDonate }
           alt={donation.title}
           className="w-full h-40 sm:h-48 object-cover"
         />
-        <div className="absolute top-4 right-4 bg-white bg-opacity-90 backdrop-blur-sm rounded-full px-3 py-1 text-sm font-semibold text-gray-700">
+        <div className="absolute bottom-3 left-3 bg-white bg-opacity-90 backdrop-blur-sm rounded-full px-2 py-1 text-xs font-semibold text-gray-700">
           {percentage}% completado
         </div>
       </div>
