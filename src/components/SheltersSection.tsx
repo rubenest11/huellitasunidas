@@ -122,6 +122,26 @@ const shelters = [
     capacity: 50,
     currentDogs: 28
   }
+  },
+  {
+    id: 7,
+    name: "Hotepa",
+    location: "Acapulco, Guerrero",
+    description: "Refugio dedicado al rescate y rehabilitación de perros en la zona costera de Acapulco.",
+    image: "https://images.pexels.com/photos/4498185/pexels-photo-4498185.jpeg?auto=compress&cs=tinysrgb&w=800",
+    dogsRescued: 425,
+    dogsAdopted: 318,
+    activeCampaigns: 4,
+    totalRaised: 32850,
+    established: "2021",
+    contact: {
+      phone: "+52 744 123 4567",
+      email: "contacto@hotepa.org",
+      website: "www.hotepa.org"
+    },
+    services: ["Rescate Costero", "Rehabilitación", "Adopciones", "Educación"],
+    capacity: 70,
+    currentDogs: 42
 ];
 
 interface SheltersSectionProps {
